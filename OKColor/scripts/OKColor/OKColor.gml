@@ -1082,7 +1082,17 @@ function OKColor() constructor {
         return variable_clone(self);
     }
     
+    static cloneMapped = function()/*->OKColor*/ {
+        _updateMapped(gamutMapping);
+        
+        return variable_clone((_gamutMappedColorCache /*#as OKColor*/));
+    }
+    
     static mix = function() {}
     
     #endregion
 }
+
+
+
+
