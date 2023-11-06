@@ -398,14 +398,6 @@ function OKColor() constructor {
     }
     
     /// @ignore
-    static _updateColor = function() {
-        
-    }
-    
-    static _updateString = function() {
-        
-    }
-    
     static _updateRGB = function() {
         var cacheRGB = _cache[_OKColorModel.RGB];
         
@@ -618,10 +610,51 @@ function OKColor() constructor {
         return self;
     }
     
-    static setColor = function()/*->OKColor*/ {}
+    /// @function setColor(color)
+    /// @self OKColor
+    /// @param {Constant.Color} [color] Description
+    /// @returns {Struct.OKColor} Description
+    /// @description Description
+    /// @hint OKColor:setColor(color:int<color>)->OKColor
+    static setColor = function(_color/*:int<color>*/)/*->OKColor*/ {
+        var cacheRGB = _cache[_OKColorModel.RGB];
+        cacheRGB.r = color_get_red(_color);
+        cacheRGB.g = color_get_green(_color);
+        cacheRGB.b = color_get_blue(_color);
+        
+        var cacheLinearRGB = _cache[_OKColorModel.LinearRGB];
+        cacheLinearRGB.r = _componentRGBtoLinearRGB(cacheRGB.r);
+        cacheLinearRGB.g = _componentRGBtoLinearRGB(cacheRGB.g);
+        cacheLinearRGB.b = _componentRGBtoLinearRGB(cacheRGB.b);
+        
+        var vector = matrix_transform_vertex(_matrixLinearRGBtoXYZ, cacheLinearRGB.r, cacheLinearRGB.g, cacheLinearRGB.b);
+        _x = vector[0];
+        _y = vector[1];
+        _z = vector[2];
+        
+        _setDirty();
+        cacheRGB.cached = true;
+        cacheLinearRGB.cached = true;
+        
+        return self;
+    }
     
-    static setString = function()/*->OKColor*/ {}
+    /// @hint OKColor:setHex(hex:string)->OKColor
+    static setHex = function(hex/*:string*/)/*->OKColor*/ {
+        var dec = 0;
+ 
+        var dig = "0123456789ABCDEF";
+        var len = string_length(hex);
+        for (var pos = 1; pos <= len; pos += 1) {
+            dec = dec << 4 | (string_pos(string_char_at(hex, pos), dig) - 1);
+        }
+        
+        var gmcolor = (dec & 0xFF0000) >> 16 | (dec & 0x00FF00) | (dec & 0x0000FF) << 16;
+        
+        return setColor(gmcolor);
+    }
     
+    /// @hint OKColor:setRGB(?red:number?, ?green:number?, ?blue:number?)->OKColor
     static setRGB = function(red/*:number?*/ = undefined, green/*:number?*/ = undefined, blue/*:number?*/ = undefined)/*->OKColor*/ {
         // update values in case of setting parameters partially
         if (red == undefined || green == undefined || blue == undefined) {
@@ -770,7 +803,7 @@ function OKColor() constructor {
         cacheLMS.m = medium != undefined ? max(0, medium) : cacheLMS.m;
         cacheLMS.s = short != undefined ? max(0, short) : cacheLMS.s;
         
-        vector = matrix_transform_vertex(_matrixLMStoXYZ, power(cacheLMS.l, 3), power(cacheLMS.m, 3), power(cacheLMS.s, 3));
+        var vector = matrix_transform_vertex(_matrixLMStoXYZ, power(cacheLMS.l, 3), power(cacheLMS.m, 3), power(cacheLMS.s, 3));
         _x = vector[0];
         _y = vector[1];
         _z = vector[2];

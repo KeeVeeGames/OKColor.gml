@@ -20,10 +20,10 @@ if (!surface_exists(surf1)) {
     for (var i = 0; i < 360; i++) {
         var hue = i;
         // show_debug_message(hue);
-        color1.setHSV(hue, mouse_y / 500, mouse_x / 500);
-        var rgb = color1.colorRGB(OKColorMapping.Clip);
+        // color1.setHSV(hue, mouse_y / 500, mouse_x / 500);
+        var rgb = color1.color();
         // show_debug_message(rgb);
-        draw_set_color(make_color_rgb(rgb.r, rgb.g, rgb.b));
+        draw_set_color(rgb);
         draw_rectangle(i * 2, 0, i * 2 + 1, 80, false);
     }
     surface_reset_target();
@@ -67,4 +67,5 @@ draw_surface(surf1, 600, 100);
 draw_surface(surf2, 600, 180);
 draw_surface(surf3, 600, 260);
 
+draw_set_color(c_white);
 draw_rectangle(0, 0, 500, 500, true);
