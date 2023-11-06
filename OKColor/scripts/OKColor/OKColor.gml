@@ -1,8 +1,6 @@
 #macro OKCOLOR_WARNINGS 1
 
 enum _OKColorModel {
-    gmcolor,
-    string,
     RGB,
     LinearRGB,
     HSV,
@@ -29,8 +27,6 @@ function OKColor() constructor {
     _z = 0;
     
     _cache = array_create(_OKColorModel._sizeof);
-    _cache[_OKColorModel.gmcolor] = { cached : true, value : #000000 };
-    _cache[_OKColorModel.string] = { cached : true, value : "#000000" };
     _cache[_OKColorModel.RGB] = { cached : true, r : 0, g : 0, b : 0 };
     _cache[_OKColorModel.LinearRGB] = { cached : true, r : 0, g : 0, b : 0 };
     _cache[_OKColorModel.HSV] = { cached : true, h : 0, s : 0, v : 0 };
@@ -47,7 +43,12 @@ function OKColor() constructor {
     _gamutMapping[OKColorMapping.Chroma] = _mapGamutRGBChroma;
     _gamutMapping[OKColorMapping.OKChroma] = _mapGamutRGBOKChroma;
     
+    /// @ignore
     _gamutMappingDefault = OKColorMapping.OKChroma;
+    /// @ignore
+    _gamutMappedColorCache = undefined;         /// @is {OKColor?}
+    /// @ignore
+    _gamutMappedColorCacheId = -1;              /// @is {int<OKColorMapping>}
     
     debugSurf = /*#cast*/ -1 /*#as surface*/;
     
@@ -61,8 +62,11 @@ function OKColor() constructor {
         for (var i = 0; i < _OKColorModel._sizeof; i++) {
             _cache[i].cached = false;
         }
+        
+        _gamutMappedColorCacheId = -1;
     }
     
+    /// @ignore
     static _gamutSegmentIntersection = function(x1, y1, x2, y2, x3, y3, x4, y4)/*->struct*/ {
         var top = (x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3);
         var bottom = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
@@ -81,51 +85,7 @@ function OKColor() constructor {
         return t1 == t2 && t1 >= 0 && t1 <= 1 && t2 >= 0 && t2 <= 1;
     }
     
-    static _gamutReduceComponent = function(componentValue/*:number*/, componentSetter/*:function<number, void>*/)/*->struct*/ {
-        var jnd = 0.02;             // "just noticable difference"
-        var epsilon = 0.0001;
-        var minComponent = 0;
-        var maxComponent = componentValue;
-        var minInGamut = true;
-        
-        static _gamutWorkingColor = new OKColor();
-        static _gamutClippedColor = new OKColor();
-        
-        _gamutWorkingColor.setXYZ(_x, _y, _z);
-        var workingRGB = _gamutWorkingColor.getRGB();
-        var clippedRGB = _gamutClipRGB(workingRGB);
-        _gamutClippedColor.setRGB(clippedRGB.r, clippedRGB.g, clippedRGB.b);
-        
-        var deltaE = _deltaEOKLab(_gamutClippedColor.getOKLab(), _gamutWorkingColor.getOKLab());
-        if (deltaE < jnd) return { r : clippedRGB.r, g : clippedRGB.g, b : clippedRGB.b };
-        
-        while (maxComponent - minComponent > epsilon) {
-            var component = (minComponent + maxComponent) / 2;
-            method(_gamutWorkingColor, componentSetter)(component);
-            workingRGB = _gamutWorkingColor.getRGB();
-            
-            if (minInGamut && _inGamutRGB(workingRGB)) {
-                minComponent = component;
-            } else {
-                clippedRGB = _gamutClipRGB(workingRGB);
-                deltaE = _deltaEOKLab(_gamutClippedColor.getOKLab(), _gamutWorkingColor.getOKLab());
-                
-                if (deltaE < jnd) {
-                    if (jnd - deltaE < epsilon) {
-                        return { r : clippedRGB.r, g : clippedRGB.g, b : clippedRGB.b };
-                    } else {
-                        minInGamut = false;
-                        minComponent = component;
-                    }
-                } else {
-                    maxComponent = component;
-                }
-            }
-        }
-        
-        return { r : clippedRGB.r, g : clippedRGB.g, b : clippedRGB.b };
-    }
-    
+    /// @ignore
     static _inGamutRGB = function(rgb/*:struct*/) {
         return (rgb.r >= 0 && rgb.r <= 255)
         && (rgb.g >= 0 && rgb.g <= 255)
@@ -245,19 +205,22 @@ function OKColor() constructor {
     
     #region Gamut mapping
     
-    static _mapGamutRGBClip = function()/*->struct*/ {
+    /// @ignore
+    static _mapGamutRGBClip = function() {
         _updateRGB();
         var cacheRGB = _cache[_OKColorModel.RGB];
         
-        return _gamutClipRGB(cacheRGB);
+        var clippedRGB = _gamutClipRGB(cacheRGB);
+        (_gamutMappedColorCache /*#as OKColor*/).setRGB(clippedRGB.r, clippedRGB.g, clippedRGB.b);
     }
     
-    static _mapGamutRGBGeometric = function()/*->struct*/ {
+    /// @ignore
+    static _mapGamutRGBGeometric = function() {
         _updateRGB();
         var cacheRGB = _cache[_OKColorModel.RGB];
         
         if (_inGamutRGB(cacheRGB)) {
-            return { r : cacheRGB.r, g : cacheRGB.g, b : cacheRGB.b };
+            (_gamutMappedColorCache /*#as OKColor*/).setRGB(cacheRGB.r, cacheRGB.g, cacheRGB.b);
         }
         
         var gamutX = _x / (_x + _y + _z) - _whitepointX;
@@ -293,7 +256,7 @@ function OKColor() constructor {
         var newX = (_y / mappedY) * mappedX;
         var newZ = (_y / mappedY) * (1 - mappedX - mappedY);
         
-        var vector = matrix_transform_vertex(_matrixXYZtoLinearRGB, newX, newY, newZ);
+        (_gamutMappedColorCache /*#as OKColor*/).setXYZ(newX, newY, newZ);
         
         // if (!surface_exists(debugSurf)) {
         //     debugSurf = surface_create(200, 200);
@@ -318,54 +281,123 @@ function OKColor() constructor {
         
         // draw_circle(mappedX * 200, mappedY * 200, 4, false);
         // surface_reset_target();
-        
-        return _gamutClipRGB({
-            r : _componentLinearRGBtoRGB(vector[0]),
-            g : _componentLinearRGBtoRGB(vector[1]),
-            b : _componentLinearRGBtoRGB(vector[2])
-        });
     }
     
-    static _mapGamutRGBChroma = function()/*->struct*/ {
+    /// @ignore
+    static _mapGamutReduceComponent = function(componentValue/*:number*/, componentSetter/*:function<number, void>*/) {
+        var jnd = 0.02;             // "just noticable difference"
+        var epsilon = 0.0001;
+        var minComponent = 0;
+        var maxComponent = componentValue;
+        var minInGamut = true;
+        
+        /// @ignore
+        static _gamutWorkingColor = new OKColor();
+        /// @ignore
+        static _gamutClippedColor = new OKColor();
+        
+        _gamutWorkingColor.setXYZ(_x, _y, _z);
+        var workingRGB = _gamutWorkingColor.getRGB();
+        var clippedRGB = _gamutClipRGB(workingRGB);
+        _gamutClippedColor.setRGB(clippedRGB.r, clippedRGB.g, clippedRGB.b);
+        
+        var deltaE = _deltaEOKLab(_gamutClippedColor.getOKLab(), _gamutWorkingColor.getOKLab());
+        if (deltaE < jnd) {
+            (_gamutMappedColorCache /*#as OKColor*/).setRGB(clippedRGB.r, clippedRGB.g, clippedRGB.b);
+            exit;
+        }
+        
+        while (maxComponent - minComponent > epsilon) {
+            var component = (minComponent + maxComponent) / 2;
+            method(_gamutWorkingColor, componentSetter)(component);
+            workingRGB = _gamutWorkingColor.getRGB();
+            
+            if (minInGamut && _inGamutRGB(workingRGB)) {
+                minComponent = component;
+            } else {
+                clippedRGB = _gamutClipRGB(workingRGB);
+                deltaE = _deltaEOKLab(_gamutClippedColor.getOKLab(), _gamutWorkingColor.getOKLab());
+                
+                if (deltaE < jnd) {
+                    if (jnd - deltaE < epsilon) {
+                        (_gamutMappedColorCache /*#as OKColor*/).setRGB(clippedRGB.r, clippedRGB.g, clippedRGB.b);
+                        exit;
+                    } else {
+                        minInGamut = false;
+                        minComponent = component;
+                    }
+                } else {
+                    maxComponent = component;
+                }
+            }
+        }
+        
+        (_gamutMappedColorCache /*#as OKColor*/).setRGB(clippedRGB.r, clippedRGB.g, clippedRGB.b);
+    }
+    
+    /// @ignore
+    static _mapGamutRGBChroma = function() {
         _updateLCH();
         var cacheLCH = _cache[_OKColorModel.LCH];
         var l = cacheLCH.l;
         
-        if (l >= 100) return { r : 255, g : 255, b : 255 };
-        if (l <= 0) return { r : 0, g : 0, b : 0 };
+        if (l >= 100) {
+            (_gamutMappedColorCache /*#as OKColor*/).setXYZ(_whitepoint.x, _whitepoint.y, _whitepoint.z);
+            exit;
+        }
+        else if (l <= 0) {
+            (_gamutMappedColorCache /*#as OKColor*/).setXYZ(0, 0, 0);
+        }
         
         _updateRGB();
         var cacheRGB = _cache[_OKColorModel.RGB];
         
         if (_inGamutRGB(cacheRGB)) {
-            return { r : cacheRGB.r, g : cacheRGB.g, b : cacheRGB.b };
+            (_gamutMappedColorCache /*#as OKColor*/).setRGB(cacheRGB.r, cacheRGB.g, cacheRGB.b);
         }
         
-        return _gamutReduceComponent(cacheLCH.c, function(chroma/*:number*/) { setLCH(, chroma); });
+        _mapGamutReduceComponent(cacheLCH.c, function(chroma/*:number*/) { setLCH(, chroma); });
     }
     
-    static _mapGamutRGBOKChroma = function()/*->struct*/ {
+    /// @ignore
+    static _mapGamutRGBOKChroma = function() {
         _updateOKLCH();
         var cacheOKLCH = _cache[_OKColorModel.OKLCH];
         var l = cacheOKLCH.l;
         
-        if (l >= 1) return { r : 255, g : 255, b : 255 };
-        if (l <= 0) return { r : 0, g : 0, b : 0 };
+        if (l >= 1) {
+            (_gamutMappedColorCache /*#as OKColor*/).setXYZ(_whitepoint.x, _whitepoint.y, _whitepoint.z);
+            exit;
+        }
+        else if (l <= 0) {
+            (_gamutMappedColorCache /*#as OKColor*/).setXYZ(0, 0, 0);
+        }
         
         _updateRGB();
         var cacheRGB = _cache[_OKColorModel.RGB];
         
         if (_inGamutRGB(cacheRGB)) {
-            return { r : cacheRGB.r, g : cacheRGB.g, b : cacheRGB.b };
+            (_gamutMappedColorCache /*#as OKColor*/).setRGB(cacheRGB.r, cacheRGB.g, cacheRGB.b);
         }
         
-        return _gamutReduceComponent(cacheOKLCH.c, function(chroma/*:number*/) { setOKLCH(, chroma); });
+        _mapGamutReduceComponent(cacheOKLCH.c, function(chroma/*:number*/) { setOKLCH(, chroma); });
     }
     
     #endregion
     
     #region Updates
     
+    /// @ignore
+    static _updateMapped = function(gamutMapping/*:int<OKColorMapping>*/) {
+        _gamutMappedColorCache ??= new OKColor();
+        
+        if (_gamutMappedColorCacheId != gamutMapping) {
+            method(self, _gamutMapping[gamutMapping])();
+            _gamutMappedColorCacheId = gamutMapping;
+        }
+    }
+    
+    /// @ignore
     static _updateColor = function() {
         
     }
@@ -935,16 +967,45 @@ function OKColor() constructor {
     
     #region Color Getters
     
-    static color = function()/*->number*/ {
+    /// @function color(gamutMapping)
+    /// @self OKColor
+    /// @pure
+    /// @param {Enum.OKColorMapping} [gamutMapping] Description
+    /// @returns {Constant.Color} Description
+    /// @description Description
+    static color = function(gamutMapping/*:int<OKColorMapping>*/ = _gamutMappingDefault)/*->int<color>*/ {
+        _updateMapped(gamutMapping);
+        var mappedRGB = (_gamutMappedColorCache /*#as OKColor*/).getRGB();
         
+        return make_color_rgb(mappedRGB.r, mappedRGB.g, mappedRGB.b);
     }
     
-    static colorHex = function()/*->string*/ {
+    static colorHex = function(gamutMapping/*:int<OKColorMapping>*/ = _gamutMappingDefault)/*->string*/ {
+        _updateMapped(gamutMapping);
+        var mappedRGB = (_gamutMappedColorCache /*#as OKColor*/).getRGB();
         
+        var dec = make_color_rgb(mappedRGB.b, mappedRGB.g, mappedRGB.r);
+        var len = 6;
+        var hex = "";
+        
+        var dig = "0123456789ABCDEF";
+        while (len-- || dec) {
+            hex = string_char_at(dig, (dec & $F) + 1) + hex;
+            dec = dec >> 4;
+        }
+        
+        return "#" + hex;
     }
     
     static colorRGB = function(gamutMapping/*:int<OKColorMapping>*/ = _gamutMappingDefault)/*->struct*/ {
-        return method(self, _gamutMapping[gamutMapping])();
+        _updateMapped(gamutMapping);
+        var mappedRGB = (_gamutMappedColorCache /*#as OKColor*/).getRGB();
+        
+        return {
+            r : mappedRGB.r,
+            g : mappedRGB.g,
+            b : mappedRGB.b
+        }
     }
     
     #endregion
