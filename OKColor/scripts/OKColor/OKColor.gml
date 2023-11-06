@@ -81,13 +81,58 @@ function OKColor() constructor {
         return t1 == t2 && t1 >= 0 && t1 <= 1 && t2 >= 0 && t2 <= 1;
     }
     
+    static _gamutReduceComponent = function(componentValue/*:number*/, componentSetter/*:function<number, void>*/)/*->struct*/ {
+        var jnd = 0.02;             // "just noticable difference"
+        var epsilon = 0.0001;
+        var minComponent = 0;
+        var maxComponent = componentValue;
+        var minInGamut = true;
+        
+        static _gamutWorkingColor = new OKColor();
+        static _gamutClippedColor = new OKColor();
+        
+        _gamutWorkingColor.setXYZ(_x, _y, _z);
+        var workingRGB = _gamutWorkingColor.getRGB();
+        var clippedRGB = _gamutClipRGB(workingRGB);
+        _gamutClippedColor.setRGB(clippedRGB.r, clippedRGB.g, clippedRGB.b);
+        
+        var deltaE = _deltaEOKLab(_gamutClippedColor.getOKLab(), _gamutWorkingColor.getOKLab());
+        if (deltaE < jnd) return { r : clippedRGB.r, g : clippedRGB.g, b : clippedRGB.b };
+        
+        while (maxComponent - minComponent > epsilon) {
+            var component = (minComponent + maxComponent) / 2;
+            method(_gamutWorkingColor, componentSetter)(component);
+            workingRGB = _gamutWorkingColor.getRGB();
+            
+            if (minInGamut && _inGamutRGB(workingRGB)) {
+                minComponent = component;
+            } else {
+                clippedRGB = _gamutClipRGB(workingRGB);
+                deltaE = _deltaEOKLab(_gamutClippedColor.getOKLab(), _gamutWorkingColor.getOKLab());
+                
+                if (deltaE < jnd) {
+                    if (jnd - deltaE < epsilon) {
+                        return { r : clippedRGB.r, g : clippedRGB.g, b : clippedRGB.b };
+                    } else {
+                        minInGamut = false;
+                        minComponent = component;
+                    }
+                } else {
+                    maxComponent = component;
+                }
+            }
+        }
+        
+        return { r : clippedRGB.r, g : clippedRGB.g, b : clippedRGB.b };
+    }
+    
     static _inGamutRGB = function(rgb/*:struct*/) {
         return (rgb.r >= 0 && rgb.r <= 255)
         && (rgb.g >= 0 && rgb.g <= 255)
         && (rgb.b >= 0 && rgb.b <= 255);
     }
     
-    static _clipGamutRGB = function(rgb/*:struct*/)/*->struct*/ {
+    static _gamutClipRGB = function(rgb/*:struct*/)/*->struct*/ {
         return {
             r : clamp(rgb.r, 0, 255),
             g : clamp(rgb.g, 0, 255),
@@ -194,7 +239,7 @@ function OKColor() constructor {
         _updateRGB();
         var cacheRGB = _cache[_OKColorModel.RGB];
         
-        return _clipGamutRGB(cacheRGB);
+        return _gamutClipRGB(cacheRGB);
     }
     
     static _mapGamutRGBGeometric = function()/*->struct*/ {
@@ -264,7 +309,7 @@ function OKColor() constructor {
         // draw_circle(mappedX * 200, mappedY * 200, 4, false);
         // surface_reset_target();
         
-        return _clipGamutRGB({
+        return _gamutClipRGB({
             r : _componentLinearRGBtoRGB(vector[0]),
             g : _componentLinearRGBtoRGB(vector[1]),
             b : _componentLinearRGBtoRGB(vector[2])
@@ -286,46 +331,7 @@ function OKColor() constructor {
             return { r : cacheRGB.r, g : cacheRGB.g, b : cacheRGB.b };
         }
         
-        var jnd = 0.02;             // "just noticable difference"
-        var epsilon = 0.0001;
-        var minChroma = 0;
-        var maxChroma = cacheLCH.c;
-        var minInGamut = true;
-        
-        var current = clone();
-        var currentRGB = current.getRGB();
-        var clippedRGB = _clipGamutRGB(currentRGB);
-        var clipped = new OKColor().setRGB(clippedRGB.r, clippedRGB.g, clippedRGB.b);
-        
-        var deltaE = _deltaEOKLab(clipped.getOKLab(), current.getOKLab());
-        if (deltaE < jnd) return { r : clippedRGB.r, g : clippedRGB.g, b : clippedRGB.b };
-        
-        while (maxChroma - minChroma > epsilon) {
-            var chroma = (minChroma + maxChroma) / 2;
-            current.setLCH(, chroma);
-            currentRGB = current.getRGB();
-            
-            if (minInGamut && _inGamutRGB(currentRGB)) {
-                minChroma = chroma;
-            } else {
-                clippedRGB = _clipGamutRGB(currentRGB);
-                deltaE = _deltaEOKLab(clipped.getOKLab(), current.getOKLab());
-                
-                if (deltaE < jnd) {
-                    if (jnd - deltaE < epsilon) {
-                        return { r : clippedRGB.r, g : clippedRGB.g, b : clippedRGB.b };
-                    } else {
-                        minInGamut = false;
-                        minChroma = chroma;
-                    }
-                } else {
-                    maxChroma = chroma;
-                }
-            }
-        }
-        
-        clippedRGB = _clipGamutRGB(currentRGB);
-        return { r : clippedRGB.r, g : clippedRGB.g, b : clippedRGB.b };
+        return _gamutReduceComponent(cacheLCH.c, function(chroma/*:number*/) { setLCH(, chroma); });
     }
     
     static _mapGamutRGBOKChroma = function()/*->struct*/ {
@@ -343,46 +349,7 @@ function OKColor() constructor {
             return { r : cacheRGB.r, g : cacheRGB.g, b : cacheRGB.b };
         }
         
-        var jnd = 0.02;             // "just noticable difference"
-        var epsilon = 0.0001;
-        var minChroma = 0;
-        var maxChroma = cacheOKLCH.c;
-        var minInGamut = true;
-        
-        var current = clone();
-        var currentRGB = current.getRGB();
-        var clippedRGB = _clipGamutRGB(currentRGB);
-        var clipped = new OKColor().setRGB(clippedRGB.r, clippedRGB.g, clippedRGB.b);
-        
-        var deltaE = _deltaEOKLab(clipped.getOKLab(), current.getOKLab());
-        if (deltaE < jnd) return { r : clippedRGB.r, g : clippedRGB.g, b : clippedRGB.b };
-        
-        while (maxChroma - minChroma > epsilon) {
-            var chroma = (minChroma + maxChroma) / 2;
-            current.setOKLCH(, chroma);
-            currentRGB = current.getRGB();
-            
-            if (minInGamut && _inGamutRGB(currentRGB)) {
-                minChroma = chroma;
-            } else {
-                clippedRGB = _clipGamutRGB(currentRGB);
-                deltaE = _deltaEOKLab(clipped.getOKLab(), current.getOKLab());
-                
-                if (deltaE < jnd) {
-                    if (jnd - deltaE < epsilon) {
-                        return { r : clippedRGB.r, g : clippedRGB.g, b : clippedRGB.b };
-                    } else {
-                        minInGamut = false;
-                        minChroma = chroma;
-                    }
-                } else {
-                    maxChroma = chroma;
-                }
-            }
-        }
-        
-        clippedRGB = _clipGamutRGB(currentRGB);
-        return { r : clippedRGB.r, g : clippedRGB.g, b : clippedRGB.b };
+        return _gamutReduceComponent(cacheOKLCH.c, function(chroma/*:number*/) { setOKLCH(, chroma); });
     }
     
     #endregion
@@ -599,6 +566,16 @@ function OKColor() constructor {
     
     #region Setters
     
+    static setXYZ = function(x/*:number?*/ = undefined, y/*:number?*/ = undefined, z/*:number?*/ = undefined)/*->OKColor*/ {
+        _x = x ?? _x;
+        _y = y ?? _y;
+        _z = z ?? _z;
+        
+        _setDirty();
+        
+        return self;
+    }
+    
     static setColor = function()/*->OKColor*/ {}
     
     static setString = function()/*->OKColor*/ {}
@@ -722,7 +699,7 @@ function OKColor() constructor {
     static setLCH = function(lightness/*:number?*/ = undefined, chroma/*:number?*/ = undefined, hue/*:number?*/ = undefined)/*->OKColor*/ {
         // update values in case of setting parameters partially
         if (lightness == undefined || chroma == undefined || hue == undefined) {
-            _updateOKLCH();
+            _updateLCH();
         }
         
         var cacheLCH = _cache[_OKColorModel.LCH];
