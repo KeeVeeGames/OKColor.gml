@@ -1,73 +1,95 @@
 #macro OKCOLOR_WARNINGS 1
 
+// Feather ignore GM2017
+// Feather ignore GM2043
+// Feather ignore GM2023
+// Feather ignore GM1042
+// Feather ignore GM1044
+
 enum _OKColorModel {
-    RGB,
-    LinearRGB,
-    HSV,
-    HSL,
-    LMS,
-    Lab,
-    LCH,
-    OKLab,
-    OKLCH,
+    RGB,            /// @is {RGBCachedStruct}
+    LinearRGB,      /// @is {RGBCachedStruct}
+    HSV,            /// @is {HSVCachedStruct}
+    HSL,            /// @is {HSLCachedStruct}
+    LMS,            /// @is {LMSCachedStruct}
+    Lab,            /// @is {LabCachedStruct}
+    LCH,            /// @is {LCHCachedStruct}
+    OKLab,          /// @is {LabCachedStruct}
+    OKLCH,          /// @is {LCHCachedStruct}
     _sizeof
 }
 
 enum OKColorMapping {
-    Clip,
-    Geometric,
-    Chroma,
-    OKChroma,
+    Clip,           /// @is {function<void>}
+    Geometric,      /// @is {function<void>}
+    Chroma,         /// @is {function<void>}
+    OKChroma,       /// @is {function<void>}
     _sizeof
 }
 
+enum OKColorMixing {
+    RGB,            /// @is {function<void>}
+    Lab,            /// @is {function<void>}
+    OKLab,          /// @is {function<void>}
+}
+
+/// @description Description
 function OKColor() constructor {
+    /// @ignore
     _x = 0;
+    /// @ignore
     _y = 0;
+    /// @ignore
     _z = 0;
     
-    _cache = array_create(_OKColorModel._sizeof);
+    /// @ignore
+    _cache = /*#cast*/ array_create(_OKColorModel._sizeof);   /// @is {enum_tuple<_OKColorModel>}
     _cache[_OKColorModel.RGB] = { cached : true, r : 0, g : 0, b : 0 };
     _cache[_OKColorModel.LinearRGB] = { cached : true, r : 0, g : 0, b : 0 };
     _cache[_OKColorModel.HSV] = { cached : true, h : 0, s : 0, v : 0 };
-    _cache[_OKColorModel.HSL] = { cached : true, h : 0, s : 0, v : 0 };
+    _cache[_OKColorModel.HSL] = { cached : true, h : 0, s : 0, l : 0 };
     _cache[_OKColorModel.LMS] = { cached : true, l : 0, m : 0, s : 0 };
     _cache[_OKColorModel.Lab] = { cached : true, l : 0, a : 0, b : 0 };
     _cache[_OKColorModel.LCH] = { cached : true, l : 0, c : 0, h : 0 };
     _cache[_OKColorModel.OKLab] = { cached : true, l : 0, a : 0, b : 0 };
     _cache[_OKColorModel.OKLCH] = { cached : true, l : 0, c : 0, h : 0 };
     
-    _gamutMapping = array_create(OKColorMapping._sizeof);
+    /// @ignore
+    _gamutMapping = /*#cast*/ array_create(OKColorMapping._sizeof);      /// @is {enum_tuple<OKColorMapping>}
     _gamutMapping[OKColorMapping.Clip] = _mapGamutRGBClip;
     _gamutMapping[OKColorMapping.Geometric] = _mapGamutRGBGeometric;
     _gamutMapping[OKColorMapping.Chroma] = _mapGamutRGBChroma;
     _gamutMapping[OKColorMapping.OKChroma] = _mapGamutRGBOKChroma;
     
     /// @ignore
-    _gamutMappingDefault = OKColorMapping.OKChroma;
+    _gamutMappingDefault = OKColorMapping.OKChroma;     /// @is {int<OKColorMapping>}
     /// @ignore
-    _gamutMappedColorCache = undefined;         /// @is {OKColor?}
+    _gamutMappedColorCache = undefined;                 /// @is {OKColor?}
     /// @ignore
-    _gamutMappedColorCacheId = -1;              /// @is {int<OKColorMapping>}
+    _gamutMappedColorCacheId = -1;                      /// @is {int<OKColorMapping>}
     
-    debugSurf = /*#cast*/ -1 /*#as surface*/;
+    /// @ignore
+    static _whitepointX = 0.3127;
+    /// @ignore
+    static _whitepointY = 0.3290;
+    /// @ignore
+    static _whitepoint = { x : _whitepointX / _whitepointY, y : 1, z : (1 - _whitepointX - _whitepointY) / _whitepointY };  /// @is {XYZStruct}
+    
+    // debugSurf = cast -1 as surface;
     
     #region Private
     
-    static _whitepointX = 0.3127;
-    static _whitepointY = 0.3290;
-    static _whitepoint = { x : _whitepointX / _whitepointY, y : 1, z : (1 - _whitepointX - _whitepointY) / _whitepointY };
-    
-    static _setDirty = function() {
+    /// @ignore
+    static _setDirty = function()/*->void*/ {
         for (var i = 0; i < _OKColorModel._sizeof; i++) {
-            _cache[i].cached = false;
+            (_cache[i] /*#as IColorCachedStruct*/).cached = false;
         }
         
         _gamutMappedColorCacheId = -1;
     }
     
     /// @ignore
-    static _gamutSegmentIntersection = function(x1, y1, x2, y2, x3, y3, x4, y4)/*->struct*/ {
+    static _gamutSegmentIntersection = function(x1/*:number*/, y1/*:number*/, x2/*:number*/, y2/*:number*/, x3/*:number*/, y3/*:number*/, x4/*:number*/, y4/*:number*/)/*->Vector2Struct*/ {
         var top = (x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3);
         var bottom = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
         var t = top / bottom;
@@ -78,7 +100,8 @@ function OKColor() constructor {
         return { x : lerp(x1, x2, t), y : lerp(y1, y2, t) };
     }
     
-    static _gamutPointOnSegment = function(px, py, x1, y1, x2, y2)/*->bool*/ {
+    /// @ignore
+    static _gamutPointOnSegment = function(px/*:number*/, py/*:number*/, x1/*:number*/, y1/*:number*/, x2/*:number*/, y2/*:number*/)/*->bool*/ {
         var t1 = (px - x1) / (x2 - x1);
         var t2 = (py - y1) / (y2 - y1);
         
@@ -86,13 +109,14 @@ function OKColor() constructor {
     }
     
     /// @ignore
-    static _inGamutRGB = function(rgb/*:struct*/) {
+    static _inGamutRGB = function(rgb/*:RGBStruct*/)/*->bool*/ {
         return (rgb.r >= 0 && rgb.r <= 255)
         && (rgb.g >= 0 && rgb.g <= 255)
         && (rgb.b >= 0 && rgb.b <= 255);
     }
     
-    static _gamutClipRGB = function(rgb/*:struct*/)/*->struct*/ {
+    /// @ignore
+    static _gamutClipRGB = function(rgb/*:RGBStruct*/)/*->RGBStruct*/ {
         return {
             r : clamp(rgb.r, 0, 255),
             g : clamp(rgb.g, 0, 255),
@@ -100,13 +124,15 @@ function OKColor() constructor {
         };
     }
     
-    static _deltaEOKLab = function(oklab1/*:struct*/, oklab2/*:struct*/)/*->number*/ {
+    /// @ignore
+    static _deltaEOKLab = function(oklab1/*:LabStruct*/, oklab2/*:LabStruct*/)/*->number*/ {
         var delta_l = oklab1.l - oklab2.l;
         var delta_a = oklab1.a - oklab2.a;
         var delta_b = oklab1.b - oklab2.b;
         return sqrt(delta_l * delta_l + delta_a * delta_a + delta_b * delta_b);
     }
     
+    /// @ignore
     static _componentRGBtoLinearRGB = function(component/*:number*/)/*->number*/ {
         component /= 255;
         
@@ -117,6 +143,7 @@ function OKColor() constructor {
         }
     }
     
+    /// @ignore
     static _componentLinearRGBtoRGB = function(component/*:number*/)/*->number*/ {
         if (component >= 0.0031308) {
             return (1.055 * power(component, 1.0 / 2.4) - 0.055) * 255;
@@ -125,7 +152,8 @@ function OKColor() constructor {
         }
     }
     
-    static _piecewiseHSVtoRGB = function(n/*:number*/, hsv/*:struct*/)/*->number*/ {
+    /// @ignore
+    static _piecewiseHSVtoRGB = function(n/*:number*/, hsv/*:HSVStruct*/)/*->number*/ {
         var h = hsv.h;
         var s = hsv.s;
         var v = hsv.v;
@@ -135,7 +163,8 @@ function OKColor() constructor {
         return v - v * s * max(0, min(k, 4 - k, 1));
     }
     
-    static _piecewiseHSLtoRGB = function(n/*:number*/, hsl/*:struct*/)/*->number*/ {
+    /// @ignore
+    static _piecewiseHSLtoRGB = function(n/*:number*/, hsl/*:HSLStruct*/)/*->number*/ {
         var h = hsl.h;
         var s = hsl.s;
         var l = hsl.l;
@@ -146,7 +175,8 @@ function OKColor() constructor {
         return l - a * max(-1, min(k - 3, 9 - k, 1));
     }
     
-    static _updateXYZfromLab = function(lab/*:struct*/) {
+    /// @ignore
+    static _setXYZfromLab = function(lab/*:LabStruct*/) {
         var epsilon = 24/116;
         var k = 24389/27;
         
@@ -159,6 +189,7 @@ function OKColor() constructor {
         _z = fZ > epsilon ? power(fZ, 3) * _whitepoint.z : (116 * fZ - 16) / k * _whitepoint.z;
     }
     
+    /// @ignore
     static _matrixXYZtoLinearRGB = [
         3.2409699419045226, -0.9692436362808796, 0.0556300796969936, 0,
         -1.5373831775700939, 1.8759675015077204, -0.2039769588889765, 0,
@@ -166,6 +197,7 @@ function OKColor() constructor {
         0, 0, 0, 1
     ];
     
+    /// @ignore
     static _matrixLinearRGBtoXYZ = [
         0.4123907992659593, 0.2126390058715102, 0.0193308187155918, 0,
         0.3575843393838780, 0.7151686787677560, 0.1191947797946260, 0,
@@ -173,6 +205,7 @@ function OKColor() constructor {
         0, 0, 0, 1
     ];
     
+    /// @ignore
     static _matrixXYZtoLMS = [
         0.8190224432164319, 0.0329836671980271, 0.048177199566046255, 0,
         0.3619062562801221, 0.9292868468965546, 0.26423952494422764, 0,
@@ -180,6 +213,7 @@ function OKColor() constructor {
         0, 0, 0, 1
     ];
     
+    /// @ignore
     static _matrixLMStoXYZ = [
         1.2268798733741557, -0.04057576262431372, -0.07637294974672142, 0,
         -0.5578149965554813, 1.1122868293970594, -0.4214933239627914, 0,
@@ -187,6 +221,7 @@ function OKColor() constructor {
         0, 0, 0, 1
     ];
     
+    /// @ignore
     static _matrixLMStoOKLab = [
         0.2104542553, 1.9779984951, 0.0259040371, 0,
         0.7936177850, -2.4285922050, 0.7827717662, 0,
@@ -194,6 +229,7 @@ function OKColor() constructor {
         0, 0, 0, 1
     ];
     
+    /// @ignore
     static _matrixOKLabtoLMS = [
         0.99999999845051981432, 1.0000000088817607767, 1.0000000546724109177, 0,
         0.39633779217376785678, -0.1055613423236563494, -0.089484182094965759684, 0,
@@ -206,7 +242,7 @@ function OKColor() constructor {
     #region Gamut mapping
     
     /// @ignore
-    static _mapGamutRGBClip = function() {
+    static _mapGamutRGBClip = function()/*->void*/ {
         _updateRGB();
         var cacheRGB = _cache[_OKColorModel.RGB];
         
@@ -215,7 +251,7 @@ function OKColor() constructor {
     }
     
     /// @ignore
-    static _mapGamutRGBGeometric = function() {
+    static _mapGamutRGBGeometric = function()/*->void*/ {
         _updateRGB();
         var cacheRGB = _cache[_OKColorModel.RGB];
         
@@ -284,7 +320,7 @@ function OKColor() constructor {
     }
     
     /// @ignore
-    static _mapGamutReduceComponent = function(componentValue/*:number*/, componentSetter/*:function<number, void>*/) {
+    static _mapGamutReduceComponent = function(componentValue/*:number*/, componentSetter/*:function<number, void>*/)/*->void*/ {
         var jnd = 0.02;             // "just noticable difference"
         var epsilon = 0.0001;
         var minComponent = 0;
@@ -336,7 +372,7 @@ function OKColor() constructor {
     }
     
     /// @ignore
-    static _mapGamutRGBChroma = function() {
+    static _mapGamutRGBChroma = function()/*->void*/ {
         _updateLCH();
         var cacheLCH = _cache[_OKColorModel.LCH];
         var l = cacheLCH.l;
@@ -360,7 +396,7 @@ function OKColor() constructor {
     }
     
     /// @ignore
-    static _mapGamutRGBOKChroma = function() {
+    static _mapGamutRGBOKChroma = function()/*->void*/ {
         _updateOKLCH();
         var cacheOKLCH = _cache[_OKColorModel.OKLCH];
         var l = cacheOKLCH.l;
@@ -385,10 +421,14 @@ function OKColor() constructor {
     
     #endregion
     
+    #region Color mixing
+    
+    #endregion
+    
     #region Updates
     
     /// @ignore
-    static _updateMapped = function(gamutMapping/*:int<OKColorMapping>*/) {
+    static _updateMapped = function(gamutMapping/*:int<OKColorMapping>*/)/*->void*/ {
         _gamutMappedColorCache ??= new OKColor();
         
         if (_gamutMappedColorCacheId != gamutMapping) {
@@ -398,7 +438,7 @@ function OKColor() constructor {
     }
     
     /// @ignore
-    static _updateRGB = function() {
+    static _updateRGB = function()/*->void*/ {
         var cacheRGB = _cache[_OKColorModel.RGB];
         
         if (!cacheRGB.cached) {
@@ -412,7 +452,8 @@ function OKColor() constructor {
         }
     }
     
-    static _updateLinearRGB = function() {
+    /// @ignore
+    static _updateLinearRGB = function()/*->void*/ {
         var cacheLinearRGB = _cache[_OKColorModel.LinearRGB];
         
         if (!cacheLinearRGB.cached) {
@@ -425,7 +466,8 @@ function OKColor() constructor {
         }
     }
     
-    static _updateHSV = function() {
+    /// @ignore
+    static _updateHSV = function()/*->void*/ {
         var cacheHSV = _cache[_OKColorModel.HSV];
         
         if (!cacheHSV.cached) {
@@ -462,7 +504,8 @@ function OKColor() constructor {
         }
     }
     
-    static _updateHSL = function() {
+    /// @ignore
+    static _updateHSL = function()/*->void*/ {
         var cacheHSL = _cache[_OKColorModel.HSL];
         
         if (!cacheHSL.cached) {
@@ -499,7 +542,8 @@ function OKColor() constructor {
         }
     }
     
-    static _updateLMS = function() {
+    /// @ignore
+    static _updateLMS = function()/*->void*/ {
         var cacheLMS = _cache[_OKColorModel.LMS];
         
         if (!cacheLMS.cached) {
@@ -512,7 +556,8 @@ function OKColor() constructor {
         }
     }
     
-    static _updateLab = function() {
+    /// @ignore
+    static _updateLab = function()/*->void*/ {
         var cacheLab = _cache[_OKColorModel.Lab];
         
         if (!cacheLab.cached) {
@@ -534,7 +579,8 @@ function OKColor() constructor {
         }
     }
     
-    static _updateLCH = function() {
+    /// @ignore
+    static _updateLCH = function()/*->void*/ {
         var cacheLCH = _cache[_OKColorModel.LCH];
         
         if (!cacheLCH.cached) {
@@ -557,7 +603,8 @@ function OKColor() constructor {
         }
     }
     
-    static _updateOKLab = function() {
+    /// @ignore
+    static _updateOKLab = function()/*->void*/ {
         var cacheOKLab = _cache[_OKColorModel.OKLab];
         
         if (!cacheOKLab.cached) {
@@ -573,7 +620,8 @@ function OKColor() constructor {
         }
     }
     
-    static _updateOKLCH = function() {
+    /// @ignore
+    static _updateOKLCH = function()/*->void*/ {
         var cacheOKLCH = _cache[_OKColorModel.OKLCH];
         
         if (!cacheOKLCH.cached) {
@@ -600,7 +648,15 @@ function OKColor() constructor {
     
     #region Setters
     
+    /// @function setXYZ(x, y, z)
+    /// @self OKColor
+    /// @param {Real} [x] Description
+    /// @param {Real} [y] Description
+    /// @param {Real} [z] Description
+    /// @description Description
     static setXYZ = function(x/*:number?*/ = undefined, y/*:number?*/ = undefined, z/*:number?*/ = undefined)/*->OKColor*/ {
+        /// @hint OKColor:setXYZ(?x:number?, ?y:number?, ?z:number?)->OKColor
+        
         _x = x ?? _x;
         _y = y ?? _y;
         _z = z ?? _z;
@@ -612,11 +668,11 @@ function OKColor() constructor {
     
     /// @function setColor(color)
     /// @self OKColor
-    /// @param {Constant.Color} [color] Description
-    /// @returns {Struct.OKColor} Description
+    /// @param {Constant.Color} color Description
     /// @description Description
-    /// @hint OKColor:setColor(color:int<color>)->OKColor
     static setColor = function(_color/*:int<color>*/)/*->OKColor*/ {
+        /// @hint OKColor:setColor(color:int<color>)->OKColor
+        
         var cacheRGB = _cache[_OKColorModel.RGB];
         cacheRGB.r = color_get_red(_color);
         cacheRGB.g = color_get_green(_color);
@@ -639,8 +695,13 @@ function OKColor() constructor {
         return self;
     }
     
-    /// @hint OKColor:setHex(hex:string)->OKColor
+    /// @function setHex(hex)
+    /// @self OKColor
+    /// @param {String} hex Description
+    /// @description Description
     static setHex = function(hex/*:string*/)/*->OKColor*/ {
+        /// @hint OKColor:setHex(hex:string)->OKColor
+        
         var dec = 0;
  
         var dig = "0123456789ABCDEF";
@@ -654,8 +715,15 @@ function OKColor() constructor {
         return setColor(gmcolor);
     }
     
-    /// @hint OKColor:setRGB(?red:number?, ?green:number?, ?blue:number?)->OKColor
+    /// @function setRGB([red], [green], [blue])
+    /// @self OKColor
+    /// @param {Real} [red] Description
+    /// @param {Real} [green] Description
+    /// @param {Real} [blue] Description
+    /// @description Description
     static setRGB = function(red/*:number?*/ = undefined, green/*:number?*/ = undefined, blue/*:number?*/ = undefined)/*->OKColor*/ {
+        /// @hint OKColor:setRGB(?red:number?, ?green:number?, ?blue:number?)->OKColor
+        
         // update values in case of setting parameters partially
         if (red == undefined || green == undefined || blue == undefined) {
             _updateRGB();
@@ -683,7 +751,15 @@ function OKColor() constructor {
         return self;
     }
     
+    /// @function setLinearRGB([red], [green], [blue])
+    /// @self OKColor
+    /// @param {Real} [red] Description
+    /// @param {Real} [green] Description
+    /// @param {Real} [blue] Description
+    /// @description Description
     static setLinearRGB = function(red/*:number?*/ = undefined, green/*:number?*/ = undefined, blue/*:number?*/ = undefined)/*->OKColor*/ {
+        /// @hint OKColor:setLinearRGB(?red:number?, ?green:number?, ?blue:number?)->OKColor
+        
         // update values in case of setting parameters partially
         if (red == undefined || green == undefined || blue == undefined) {
             _updateLinearRGB();
@@ -705,7 +781,15 @@ function OKColor() constructor {
         return self;
     }
     
+    /// @function setHSV([hue], [saturation], [value])
+    /// @self OKColor
+    /// @param {Real} [hue] Description
+    /// @param {Real} [saturation] Description
+    /// @param {Real} [value] Description
+    /// @description Description
     static setHSV = function(hue/*:number?*/ = undefined, saturation/*:number?*/ = undefined, value/*:number?*/ = undefined)/*->OKColor*/ {
+        /// @hint OKColor:setHSV(?hue:number?, ?saturation:number?, ?value:number?)->OKColor
+        
         // update values in case of setting parameters partially
         if (hue == undefined || saturation == undefined || value == undefined) {
             _updateHSV();
@@ -749,7 +833,15 @@ function OKColor() constructor {
         return self;
     }
     
+    /// @function setHSL([hue], [saturation], [lightness])
+    /// @self OKColor
+    /// @param {Real} [hue] Description
+    /// @param {Real} [saturation] Description
+    /// @param {Real} [lightness] Description
+    /// @description Description
     static setHSL = function(hue/*:number?*/ = undefined, saturation/*:number?*/ = undefined, lightness/*:number?*/ = undefined)/*->OKColor*/ {
+        /// @hint OKColor:setHSL(?hue:number?, ?saturation:number?, ?lightness:number?)->OKColor
+        
         // update values in case of setting parameters partially
         if (hue == undefined || saturation == undefined || lightness == undefined) {
             _updateHSL();
@@ -793,7 +885,15 @@ function OKColor() constructor {
         return self;
     }
     
+    /// @function setLMS([long], [medium], [short])
+    /// @self OKColor
+    /// @param {Real} [long] Description
+    /// @param {Real} [medium] Description
+    /// @param {Real} [short] Description
+    /// @description Description
     static setLMS = function(long/*:number?*/ = undefined, medium/*:number?*/ = undefined, short/*:number?*/ = undefined)/*->OKColor*/ {
+        /// @hint OKColor:setLMS(?long:number?, ?medium:number?, ?short:number?)->OKColor
+        
         if (long == undefined || medium == undefined || short == undefined) {
             _updateLMS();
         }
@@ -814,18 +914,26 @@ function OKColor() constructor {
         return self;
     }
     
+    /// @function setLab([lightness], [a], [b])
+    /// @self OKColor
+    /// @param {Real} [lightness] Description
+    /// @param {Real} [a] Description
+    /// @param {Real} [b] Description
+    /// @description Description
     static setLab = function(lightness/*:number?*/ = undefined, a/*:number?*/ = undefined, b/*:number?*/ = undefined)/*->OKColor*/ {
-    	// update values in case of setting parameters partially
+        /// @hint OKColor:setLab(?lightness:number?, ?a:number?, ?b:number?)->OKColor
+        
+        // update values in case of setting parameters partially
         if (lightness == undefined || a == undefined || b == undefined) {
             _updateLab();
         }
         
-        var cacheLab = _cache[_OKColorModel.OKLab];
+        var cacheLab = _cache[_OKColorModel.Lab];
         cacheLab.l = lightness ?? cacheLab.l;
         cacheLab.a = a ?? cacheLab.a;
         cacheLab.b = b ?? cacheLab.b;
         
-        _updateXYZfromLab(cacheLab);
+        _setXYZfromLab(cacheLab);
         
         _setDirty();
         cacheLab.cached = true;
@@ -833,7 +941,15 @@ function OKColor() constructor {
         return self;
     }
     
+    /// @function setLCH([red], [green], [blue])
+    /// @self OKColor
+    /// @param {Real} [lightness] Description
+    /// @param {Real} [chroma] Description
+    /// @param {Real} [hue] Description
+    /// @description Description
     static setLCH = function(lightness/*:number?*/ = undefined, chroma/*:number?*/ = undefined, hue/*:number?*/ = undefined)/*->OKColor*/ {
+        /// @hint OKColor:setLCH(?lightness:number?, ?chroma:number?, ?hue:number?)->OKColor
+        
         // update values in case of setting parameters partially
         if (lightness == undefined || chroma == undefined || hue == undefined) {
             _updateLCH();
@@ -855,7 +971,7 @@ function OKColor() constructor {
 			cacheLab.b = -lengthdir_y(cacheLCH.c, cacheLCH.h);
         }
         
-        _updateXYZfromLab(cacheLab);
+        _setXYZfromLab(cacheLab);
         
         _setDirty();
         cacheLCH.cached = true;
@@ -864,7 +980,15 @@ function OKColor() constructor {
         return self;
     }
     
+    /// @function setOKLab([lightness], [a], [b])
+    /// @self OKColor
+    /// @param {Real} [lightness] Description
+    /// @param {Real} [a] Description
+    /// @param {Real} [b] Description
+    /// @description Description
     static setOKLab = function(lightness/*:number?*/ = undefined, a/*:number?*/ = undefined, b/*:number?*/ = undefined)/*->OKColor*/ {
+        /// @hint OKColor:setOKLab(?lightness:number?, ?a:number?, ?b:number?)->OKColor
+        
         // update values in case of setting parameters partially
         if (lightness == undefined || a == undefined || b == undefined) {
             _updateOKLab();
@@ -893,7 +1017,15 @@ function OKColor() constructor {
         return self;
     }
     
+    /// @function setOKLCH([lightness], [chroma], [hue])
+    /// @self OKColor
+    /// @param {Real} [lightness] Description
+    /// @param {Real} [chroma] Description
+    /// @param {Real} [hue] Description
+    /// @description Description
     static setOKLCH = function(lightness/*:number?*/ = undefined, chroma/*:number?*/ = undefined, hue/*:number?*/ = undefined)/*->OKColor*/ {
+        /// @hint OKColor:setOKLCH(?lightness:number?, ?chroma:number?, ?hue:number?)->OKColor
+        
         // update values in case of setting parameters partially
         if (lightness == undefined || chroma == undefined || hue == undefined) {
             _updateOKLCH();
@@ -938,59 +1070,99 @@ function OKColor() constructor {
     
     #region Getters
     
-    static getXYZ = function()/*->struct*/ {
+    /// @function getXYZ()
+    /// @self OKColor
+    /// @pure
+    /// @description Description
+    static getXYZ = function()/*->XYZStruct*/ {
         return { x : _x, y : _y, z : _z };
     }
     
-    static getRGB = function()/*->struct*/ {
+    /// @function getRGB()
+    /// @self OKColor
+    /// @pure
+    /// @description Description
+    static getRGB = function()/*->RGBStruct*/ {
         _updateRGB();
         var cacheRGB = _cache[_OKColorModel.RGB];
         return { r : cacheRGB.r, g : cacheRGB.g, b : cacheRGB.b };
     }
     
-    static getLinearRGB = function()/*->struct*/ {
+    /// @function getLinearRGB()
+    /// @self OKColor
+    /// @pure
+    /// @description Description
+    static getLinearRGB = function()/*->RGBStruct*/ {
         _updateLinearRGB();
         var cacheLinearRGB = _cache[_OKColorModel.LinearRGB];
         return { r : cacheLinearRGB.r, g : cacheLinearRGB.g, b : cacheLinearRGB.b };
     }
     
-    static getHSV = function()/*->struct*/ {
+    /// @function getHSV()
+    /// @self OKColor
+    /// @pure
+    /// @description Description
+    static getHSV = function()/*->HSVStruct*/ {
         _updateHSV();
         var cacheHSV = _cache[_OKColorModel.HSV];
         return { h : cacheHSV.h, s : cacheHSV.s, v : cacheHSV.v };
     }
     
-    static getHSL = function()/*->struct*/ {
+    /// @function getHSL()
+    /// @self OKColor
+    /// @pure
+    /// @description Description
+    static getHSL = function()/*->HSLStruct*/ {
         _updateHSL();
         var cacheHSL = _cache[_OKColorModel.HSL];
         return { h : cacheHSL.h, s : cacheHSL.s, l : cacheHSL.l };
     }
     
-    static getLMS = function()/*->struct*/ {
+    /// @function getLMS()
+    /// @self OKColor
+    /// @pure
+    /// @description Description
+    static getLMS = function()/*->LMSStruct*/ {
         _updateLMS();
         var cacheLMS = _cache[_OKColorModel.LMS];
         return { l : cacheLMS.l, m : cacheLMS.m, s : cacheLMS.s };
     }
     
-    static getLab = function()/*->struct*/ {
+    /// @function getLab()
+    /// @self OKColor
+    /// @pure
+    /// @description Description
+    static getLab = function()/*->LabStruct*/ {
         _updateLab();
         var cacheLab = _cache[_OKColorModel.Lab];
         return { l : cacheLab.l, a : cacheLab.a, b : cacheLab.b };
     }
     
-    static getLCH = function()/*->struct*/ {
+    /// @function getLCH()
+    /// @self OKColor
+    /// @pure
+    /// @description Description
+    static getLCH = function()/*->LCHStruct*/ {
         _updateLCH();
         var cacheLCH = _cache[_OKColorModel.LCH];
         return { l : cacheLCH.l, c : cacheLCH.c, h : cacheLCH.h };
     }
     
-    static getOKLab = function()/*->struct*/ {
+    /// @function getOKLab()
+    /// @self OKColor
+    /// @pure
+    /// @description Description
+    static getOKLab = function()/*->LabStruct*/ {
         _updateOKLab();
         var cacheOKLab = _cache[_OKColorModel.OKLab];
         return { l : cacheOKLab.l, a : cacheOKLab.a, b : cacheOKLab.b };
     }
     
-    static getOKLCH = function()/*->struct*/ {
+    /// @function getOKLCH()
+    /// @self OKColor
+    /// @pure
+    /// @description Description
+    static getOKLCH = function()/*->LCHStruct*/ {
         _updateOKLCH();
         var cacheOKLCH = _cache[_OKColorModel.OKLCH];
         return { l : cacheOKLCH.l, c : cacheOKLCH.c, h : cacheOKLCH.h };
@@ -1004,16 +1176,24 @@ function OKColor() constructor {
     /// @self OKColor
     /// @pure
     /// @param {Enum.OKColorMapping} [gamutMapping] Description
-    /// @returns {Constant.Color} Description
     /// @description Description
     static color = function(gamutMapping/*:int<OKColorMapping>*/ = _gamutMappingDefault)/*->int<color>*/ {
+        /// @hint OKColor:color(?gamutMapping:int<OKColorMapping>)->int<color>
+    
         _updateMapped(gamutMapping);
         var mappedRGB = (_gamutMappedColorCache /*#as OKColor*/).getRGB();
         
         return make_color_rgb(mappedRGB.r, mappedRGB.g, mappedRGB.b);
     }
     
+    /// @function colorHex(gamutMapping)
+    /// @self OKColor
+    /// @pure
+    /// @param {Enum.OKColorMapping} [gamutMapping] Description
+    /// @description Description
     static colorHex = function(gamutMapping/*:int<OKColorMapping>*/ = _gamutMappingDefault)/*->string*/ {
+        /// @hint OKColor:colorHex(?gamutMapping:int<OKColorMapping>)->string
+        
         _updateMapped(gamutMapping);
         var mappedRGB = (_gamutMappedColorCache /*#as OKColor*/).getRGB();
         
@@ -1022,6 +1202,7 @@ function OKColor() constructor {
         var hex = "";
         
         var dig = "0123456789ABCDEF";
+        // Feather ignore once GM1011
         while (len-- || dec) {
             hex = string_char_at(dig, (dec & $F) + 1) + hex;
             dec = dec >> 4;
@@ -1030,7 +1211,14 @@ function OKColor() constructor {
         return "#" + hex;
     }
     
-    static colorRGB = function(gamutMapping/*:int<OKColorMapping>*/ = _gamutMappingDefault)/*->struct*/ {
+    /// @function colorRGB(gamutMapping)
+    /// @self OKColor
+    /// @pure
+    /// @param {Enum.OKColorMapping} [gamutMapping] Description
+    /// @description Description
+    static colorRGB = function(gamutMapping/*:int<OKColorMapping>*/ = _gamutMappingDefault)/*->RGBStruct*/ {
+        /// @hint OKColor:colorRGB(?gamutMapping:int<OKColorMapping>)->RGBStruct
+        
         _updateMapped(gamutMapping);
         var mappedRGB = (_gamutMappedColorCache /*#as OKColor*/).getRGB();
         
@@ -1041,36 +1229,57 @@ function OKColor() constructor {
         }
     }
     
-    static colorHSV = function(gamutMapping/*:int<OKColorMapping>*/ = _gamutMappingDefault)/*->struct*/ {
+    /// @function colorHSV(gamutMapping)
+    /// @self OKColor
+    /// @pure
+    /// @param {Enum.OKColorMapping} [gamutMapping] Description
+    /// @description Description
+    static colorHSV = function(gamutMapping/*:int<OKColorMapping>*/ = _gamutMappingDefault)/*->HSVStruct*/ {
+        /// @hint OKColor:colorHSV(?gamutMapping:int<OKColorMapping>)->HSVStruct
+        
         _updateMapped(gamutMapping);
         var mappedHSV = (_gamutMappedColorCache /*#as OKColor*/).getHSV();
         
         return {
-            h : mappedRGB.h,
-            s : mappedRGB.s,
-            v : mappedRGB.v
+            h : mappedHSV.h,
+            s : mappedHSV.s,
+            v : mappedHSV.v
         }
     }
     
-    static colorGMHSV = function(gamutMapping/*:int<OKColorMapping>*/ = _gamutMappingDefault)/*->struct*/ {
+    /// @function colorGMHSV(gamutMapping)
+    /// @self OKColor
+    /// @pure
+    /// @param {Enum.OKColorMapping} [gamutMapping] Description
+    /// @description Description
+    static colorGMHSV = function(gamutMapping/*:int<OKColorMapping>*/ = _gamutMappingDefault)/*->HSVStruct*/ {
+        /// @hint OKColor:colorGMHSV(?gamutMapping:int<OKColorMapping>)->HSVStruct
+        
         _updateMapped(gamutMapping);
         var mappedHSV = (_gamutMappedColorCache /*#as OKColor*/).getHSV();
         
         return {
-            h : mappedRGB.h / 360 * 255,
-            s : mappedRGB.s * 255,
-            v : mappedRGB.v * 255
+            h : mappedHSV.h / 360 * 255,
+            s : mappedHSV.s * 255,
+            v : mappedHSV.v * 255
         }
     }
     
-    static colorHSL = function(gamutMapping/*:int<OKColorMapping>*/ = _gamutMappingDefault)/*->struct*/ {
+    /// @function colorHSL(gamutMapping)
+    /// @self OKColor
+    /// @pure
+    /// @param {Enum.OKColorMapping} [gamutMapping] Description
+    /// @description Description
+    static colorHSL = function(gamutMapping/*:int<OKColorMapping>*/ = _gamutMappingDefault)/*->HSLStruct*/ {
+        /// @hint OKColor:colorHSL(?gamutMapping:int<OKColorMapping>)->HSLStruct
+        
         _updateMapped(gamutMapping);
         var mappedHSL = (_gamutMappedColorCache /*#as OKColor*/).getHSL();
         
         return {
-            h : mappedRGB.h,
-            s : mappedRGB.s,
-            l : mappedRGB.l
+            h : mappedHSL.h,
+            s : mappedHSL.s,
+            l : mappedHSL.l
         }
     }
     
@@ -1078,21 +1287,110 @@ function OKColor() constructor {
     
     #region Utility
     
+    /// @function clone()
+    /// @self OKColor
+    /// @pure
+    /// @returns {Struct.OKColor}
+    /// @description Description
     static clone = function()/*->OKColor*/ {
         return variable_clone(self);
     }
     
-    static cloneMapped = function()/*->OKColor*/ {
+    /// @function cloneMapped()
+    /// @self OKColor
+    /// @pure
+    /// @param {Enum.OKColorMapping} [gamutMapping] Description
+    /// @returns {Struct.OKColor}
+    /// @description Description
+    static cloneMapped = function(gamutMapping/*:int<OKColorMapping>*/ = _gamutMappingDefault)/*->OKColor*/ {
+        /// @hint OKColor:cloneMapped(gamutMapping:int<OKColorMapping>)->OKColor
+        
         _updateMapped(gamutMapping);
         
         return variable_clone((_gamutMappedColorCache /*#as OKColor*/));
     }
     
-    static mix = function() {}
+    static mix = function(mixColor/*:OKColor*/, amount/*:number*/, gamutMapping/*:int<OKColorMapping>*/ = _gamutMappingDefault)/*->OKColor*/ {
+        _updateMapped(gamutMapping);
+        mixColor._updateMapped(gamutMapping);
+        
+        // _updateOKLab();
+        // var cacheOKLab1 = _cache[_OKColorModel.OKLab];
+        
+        // mixColor._updateOKLab();
+        // var cacheOKLab2 = mixColor._cache[_OKColorModel.OKLab];
+        
+        // setOKLab(
+        //     lerp(cacheOKLab1.l, cacheOKLab2.l, amount),
+        //     lerp(cacheOKLab1.a, cacheOKLab2.a, amount),
+        //     lerp(cacheOKLab1.b, cacheOKLab2.b, amount)
+        // );
+        
+        _updateLab();
+        var cacheLab1 = _cache[_OKColorModel.Lab];
+        
+        mixColor._updateLab();
+        var cacheLab2 = mixColor._cache[_OKColorModel.Lab];
+        
+        setLab(
+            lerp(cacheLab1.l, cacheLab2.l, amount),
+            lerp(cacheLab1.a, cacheLab2.a, amount),
+            lerp(cacheLab1.b, cacheLab2.b, amount)
+        );
+        
+        return self;
+    }
     
     #endregion
 }
 
+/// @hint {number} XYZStruct:x
+/// @hint {number} XYZStruct:y
+/// @hint {number} XYZStruct:z
 
+/// @hint {bool} IColorCachedStruct:cached
 
+/// @hint {number} RGBStruct:r
+/// @hint {number} RGBStruct:g
+/// @hint {number} RGBStruct:b
 
+/// @hint RGBCachedStruct extends RGBStruct
+/// @hint RGBCachedStruct implements IColorCachedStruct
+
+/// @hint {number} HSVStruct:h
+/// @hint {number} HSVStruct:s
+/// @hint {number} HSVStruct:v
+
+/// @hint HSVCachedStruct extends HSVStruct
+/// @hint HSVCachedStruct implements IColorCachedStruct
+
+/// @hint {number} HSLStruct:h
+/// @hint {number} HSLStruct:s
+/// @hint {number} HSLStruct:l
+
+/// @hint HSLCachedStruct extends HSLStruct
+/// @hint HSLCachedStruct implements IColorCachedStruct
+
+/// @hint {number} LMSStruct:l
+/// @hint {number} LMSStruct:m
+/// @hint {number} LMSStruct:s
+
+/// @hint LMSCachedStruct extends LMSStruct
+/// @hint LMSCachedStruct implements IColorCachedStruct
+
+/// @hint {number} LabStruct:l
+/// @hint {number} LabStruct:a
+/// @hint {number} LabStruct:b
+
+/// @hint LabCachedStruct extends LabStruct
+/// @hint LabCachedStruct implements IColorCachedStruct
+
+/// @hint {number} LCHStruct:l
+/// @hint {number} LCHStruct:c
+/// @hint {number} LCHStruct:h
+
+/// @hint LCHCachedStruct extends LCHStruct
+/// @hint LCHCachedStruct implements IColorCachedStruct
+
+/// @hint {number} Vector2Struct:x
+/// @hint {number} Vector2Struct:y
