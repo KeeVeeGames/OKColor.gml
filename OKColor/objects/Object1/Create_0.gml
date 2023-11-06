@@ -1,10 +1,10 @@
-color1 = new OKColor().setLCH(66.14, 72.61, 122.91);
+color1 = new OKColor().setOKLCH(0.7493, 0.1268, 0);
 color2 = new OKColor().setOKLCH(0.7493, 0.1268, 0);
 // // color2 = new OKColor().setLinearRGB(0.5775804404, 0.1274376804, 0.3049873141);
 
 // color3 = color1.clone();
 
-// show_debug_message(color1.getLCH());
+show_debug_message(color1.getHSV());
 // // show_debug_message(new OKColor().setRGB(0, 0, 255)._mapGamutRGBQuick());
 
 surf1 = /*#cast*/ -1;    /// @is {surface}

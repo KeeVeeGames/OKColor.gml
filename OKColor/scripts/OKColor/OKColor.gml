@@ -165,6 +165,16 @@ function OKColor() constructor {
         }
     }
     
+    static _piecewiseHSVtoRGB = function(n/*:number*/, hsv/*:struct*/)/*->number*/ {
+        var h = hsv.h;
+        var s = hsv.s;
+        var v = hsv.v;
+        
+        var k = (n + h / 60) % 6;
+        
+        return v - v * s * max(0, min(k, 4 - k, 1));
+    }
+    
     static _piecewiseHSLtoRGB = function(n/*:number*/, hsl/*:struct*/)/*->number*/ {
         var h = hsl.h;
         var s = hsl.s;
@@ -630,9 +640,51 @@ function OKColor() constructor {
         return self;
     }
     
-    static setHSV = function()/*->OKColor*/ {}
+    static setHSV = function(hue/*:number?*/ = undefined, saturation/*:number?*/ = undefined, value/*:number?*/ = undefined)/*->OKColor*/ {
+        // update values in case of setting parameters partially
+        if (hue == undefined || saturation == undefined || value == undefined) {
+            _updateHSV();
+        }
+        
+        var cacheHSV = _cache[_OKColorModel.HSV];
+        cacheHSV.h = hue ?? cacheHSV.h;
+        cacheHSV.s = saturation ?? cacheHSV.s;
+        cacheHSV.v = value ?? cacheHSV.v;
+        
+        var cacheRGB = _cache[_OKColorModel.RGB];
+        
+        if (is_nan(cacheHSV.h)) {
+            cacheHSV.h = 0;
+            var c = _piecewiseHSVtoRGB(0, cacheHSV) * 255;
+            cacheRGB.r = c;
+            cacheRGB.g = c;
+            cacheRGB.b = c;
+            cacheHSV.h = NaN;
+        } else {
+            cacheRGB.r = _piecewiseHSVtoRGB(5, cacheHSV) * 255;
+            cacheRGB.g = _piecewiseHSVtoRGB(3, cacheHSV) * 255;
+            cacheRGB.b = _piecewiseHSVtoRGB(1, cacheHSV) * 255;
+        }
+        
+        var cacheLinearRGB = _cache[_OKColorModel.LinearRGB];
+        cacheLinearRGB.r = _componentRGBtoLinearRGB(cacheRGB.r);
+        cacheLinearRGB.g = _componentRGBtoLinearRGB(cacheRGB.g);
+        cacheLinearRGB.b = _componentRGBtoLinearRGB(cacheRGB.b);
+        
+        var vector = matrix_transform_vertex(_matrixLinearRGBtoXYZ, cacheLinearRGB.r, cacheLinearRGB.g, cacheLinearRGB.b);
+        _x = vector[0];
+        _y = vector[1];
+        _z = vector[2];
+        
+        _setDirty();
+        cacheHSV.cached = true;
+        cacheRGB.cached = true;
+        cacheLinearRGB.cached = true;
+        
+        return self;
+    }
     
-    static setHSL = function(hue/*:number*/, saturation/*:number*/, lightness/*:number*/)/*->OKColor*/ {
+    static setHSL = function(hue/*:number?*/ = undefined, saturation/*:number?*/ = undefined, lightness/*:number?*/ = undefined)/*->OKColor*/ {
         // update values in case of setting parameters partially
         if (hue == undefined || saturation == undefined || lightness == undefined) {
             _updateHSL();
@@ -644,6 +696,7 @@ function OKColor() constructor {
         cacheHSL.l = lightness ?? cacheHSL.l;
         
         var cacheRGB = _cache[_OKColorModel.RGB];
+        
         if (is_nan(cacheHSL.h)) {
             cacheHSL.h = 0;
             var c = _piecewiseHSLtoRGB(0, cacheHSL) * 255;
@@ -675,7 +728,26 @@ function OKColor() constructor {
         return self;
     }
     
-    static setLMS = function()/*->OKColor*/ {}
+    static setLMS = function(long/*:number?*/ = undefined, medium/*:number?*/ = undefined, short/*:number?*/ = undefined)/*->OKColor*/ {
+        if (long == undefined || medium == undefined || short == undefined) {
+            _updateLMS();
+        }
+        
+        var cacheLMS = _cache[_OKColorModel.LMS];
+        cacheLMS.l = long != undefined ? max(0, long) : cacheLMS.l;
+        cacheLMS.m = medium != undefined ? max(0, medium) : cacheLMS.m;
+        cacheLMS.s = short != undefined ? max(0, short) : cacheLMS.s;
+        
+        vector = matrix_transform_vertex(_matrixLMStoXYZ, power(cacheLMS.l, 3), power(cacheLMS.m, 3), power(cacheLMS.s, 3));
+        _x = vector[0];
+        _y = vector[1];
+        _z = vector[2];
+        
+        _setDirty();
+        cacheLMS.cached = true;
+        
+        return self;
+    }
     
     static setLab = function(lightness/*:number?*/ = undefined, a/*:number?*/ = undefined, b/*:number?*/ = undefined)/*->OKColor*/ {
     	// update values in case of setting parameters partially
@@ -817,15 +889,23 @@ function OKColor() constructor {
         return { r : cacheLinearRGB.r, g : cacheLinearRGB.g, b : cacheLinearRGB.b };
     }
     
-    static getHSV = function()/*->struct*/ {}
+    static getHSV = function()/*->struct*/ {
+        _updateHSV();
+        var cacheHSV = _cache[_OKColorModel.HSV];
+        return { h : cacheHSV.h, s : cacheHSV.s, v : cacheHSV.v };
+    }
     
     static getHSL = function()/*->struct*/ {
         _updateHSL();
         var cacheHSL = _cache[_OKColorModel.HSL];
-        return { h : cacheHSL.r, s : cacheHSL.g, l : cacheHSL.b };
+        return { h : cacheHSL.h, s : cacheHSL.s, l : cacheHSL.l };
     }
     
-    static getLMS = function()/*->struct*/ {}
+    static getLMS = function()/*->struct*/ {
+        _updateLMS();
+        var cacheLMS = _cache[_OKColorModel.LMS];
+        return { l : cacheLMS.l, m : cacheLMS.m, s : cacheLMS.s };
+    }
     
     static getLab = function()/*->struct*/ {
         _updateLab();

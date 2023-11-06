@@ -1,7 +1,7 @@
 
-// if (surface_exists(color2.debugSurf)) {
-//     draw_surface(color2.debugSurf, 200, 200);
-// }
+if (surface_exists(color2.debugSurf)) {
+    draw_surface(color2.debugSurf, 200, 200);
+}
         
 if (!keyboard_check_pressed(vk_space)) {
     surface_free(surf1);
@@ -20,7 +20,7 @@ if (!surface_exists(surf1)) {
     for (var i = 0; i < 360; i++) {
         var hue = i;
         // show_debug_message(hue);
-        color1.setHSL(hue, mouse_y / 500, mouse_x / 500);
+        color1.setHSV(hue, mouse_y / 500, mouse_x / 500);
         var rgb = color1.colorRGB(OKColorMapping.Clip);
         // show_debug_message(rgb);
         draw_set_color(make_color_rgb(rgb.r, rgb.g, rgb.b));
