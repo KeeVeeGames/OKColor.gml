@@ -1041,6 +1041,39 @@ function OKColor() constructor {
         }
     }
     
+    static colorHSV = function(gamutMapping/*:int<OKColorMapping>*/ = _gamutMappingDefault)/*->struct*/ {
+        _updateMapped(gamutMapping);
+        var mappedHSV = (_gamutMappedColorCache /*#as OKColor*/).getHSV();
+        
+        return {
+            h : mappedRGB.h,
+            s : mappedRGB.s,
+            v : mappedRGB.v
+        }
+    }
+    
+    static colorGMHSV = function(gamutMapping/*:int<OKColorMapping>*/ = _gamutMappingDefault)/*->struct*/ {
+        _updateMapped(gamutMapping);
+        var mappedHSV = (_gamutMappedColorCache /*#as OKColor*/).getHSV();
+        
+        return {
+            h : mappedRGB.h / 360 * 255,
+            s : mappedRGB.s * 255,
+            v : mappedRGB.v * 255
+        }
+    }
+    
+    static colorHSL = function(gamutMapping/*:int<OKColorMapping>*/ = _gamutMappingDefault)/*->struct*/ {
+        _updateMapped(gamutMapping);
+        var mappedHSL = (_gamutMappedColorCache /*#as OKColor*/).getHSL();
+        
+        return {
+            h : mappedRGB.h,
+            s : mappedRGB.s,
+            l : mappedRGB.l
+        }
+    }
+    
     #endregion
     
     #region Utility
