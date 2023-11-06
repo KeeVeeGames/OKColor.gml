@@ -8,6 +8,8 @@ enum _OKColorModel {
     HSV,
     HSL,
     LMS,
+    Lab,
+    LCH,
     OKLab,
     OKLCH,
     _sizeof
@@ -16,7 +18,8 @@ enum _OKColorModel {
 enum OKColorMapping {
     Clip,
     Geometric,
-    OKLCH,
+    Chroma,
+    OKChroma,
     _sizeof
 }
 
@@ -33,19 +36,26 @@ function OKColor() constructor {
     _cache[_OKColorModel.HSV] = { cached : true, h : 0, s : 0, v : 0 };
     _cache[_OKColorModel.HSL] = { cached : true, h : 0, s : 0, v : 0 };
     _cache[_OKColorModel.LMS] = { cached : true, l : 0, m : 0, s : 0 };
+    _cache[_OKColorModel.Lab] = { cached : true, l : 0, a : 0, b : 0 };
+    _cache[_OKColorModel.LCH] = { cached : true, l : 0, c : 0, h : 0 };
     _cache[_OKColorModel.OKLab] = { cached : true, l : 0, a : 0, b : 0 };
     _cache[_OKColorModel.OKLCH] = { cached : true, l : 0, c : 0, h : 0 };
     
     _gamutMapping = array_create(OKColorMapping._sizeof);
     _gamutMapping[OKColorMapping.Clip] = _mapGamutRGBClip;
     _gamutMapping[OKColorMapping.Geometric] = _mapGamutRGBGeometric;
-    _gamutMapping[OKColorMapping.OKLCH] = _mapGamutRGBOKLCH;
+    _gamutMapping[OKColorMapping.Chroma] = _mapGamutRGBChroma;
+    _gamutMapping[OKColorMapping.OKChroma] = _mapGamutRGBOKChroma;
     
-    _gamutMappingDefault = OKColorMapping.OKLCH;
+    _gamutMappingDefault = OKColorMapping.OKChroma;
     
     debugSurf = /*#cast*/ -1 /*#as surface*/;
     
     #region Private
+    
+    static _whitepointX = 0.3127;
+    static _whitepointY = 0.3290;
+    static _whitepoint = { x : _whitepointX / _whitepointY, y : 1, z : (1 - _whitepointX - _whitepointY) / _whitepointY };
     
     static _setDirty = function() {
         for (var i = 0; i < _OKColorModel._sizeof; i++) {
@@ -121,6 +131,19 @@ function OKColor() constructor {
         return l - a * max(-1, min(k - 3, 9 - k, 1));
     }
     
+    static _updateXYZfromLab = function(lab/*:struct*/) {
+        var epsilon = 24/116;
+        var k = 24389/27;
+        
+        var fY = (lab.l + 16) / 116;
+        var fX = (lab.a / 500) + fY;
+        var fZ = fY - lab.b / 200;
+        
+        _x = fX > epsilon ? power(fX, 3) * _whitepoint.x : (116 * fX - 16) / k * _whitepoint.x;
+        _y = lab.l > 8 ? power(fY, 3) * _whitepoint.y : lab.l / k * _whitepoint.y;
+        _z = fZ > epsilon ? power(fZ, 3) * _whitepoint.z : (116 * fZ - 16) / k * _whitepoint.z;
+    }
+    
     static _matrixXYZtoLinearRGB = [
         3.2409699419045226, -0.9692436362808796, 0.0556300796969936, 0,
         -1.5373831775700939, 1.8759675015077204, -0.2039769588889765, 0,
@@ -182,36 +205,33 @@ function OKColor() constructor {
             return { r : cacheRGB.r, g : cacheRGB.g, b : cacheRGB.b };
         }
         
-        var whiteX = 0.3127;
-        var whiteY = 0.3290;
-        
-        var gamutX = _x / (_x + _y + _z) - whiteX;
-        var gamutY = _y / (_x + _y + _z) - whiteY;
-        var redX = 0.64 - whiteX;
-        var redY = 0.33 - whiteY;
-        var greenX = 0.30 - whiteX;
-        var greenY = 0.60 - whiteY;
-        var blueX = 0.15 - whiteX;
-        var blueY = 0.06 - whiteY;
+        var gamutX = _x / (_x + _y + _z) - _whitepointX;
+        var gamutY = _y / (_x + _y + _z) - _whitepointY;
+        var redX = 0.64 - _whitepointX;
+        var redY = 0.33 - _whitepointY;
+        var greenX = 0.30 - _whitepointX;
+        var greenY = 0.60 - _whitepointY;
+        var blueX = 0.15 - _whitepointX;
+        var blueY = 0.06 - _whitepointY;
         
         var intersection1 = _gamutSegmentIntersection(gamutX, gamutY, 0, 0, redX, redY, greenX, greenY);
         var intersection2 = _gamutSegmentIntersection(gamutX, gamutY, 0, 0, greenX, greenY, blueX, blueY);
         var intersection3 = _gamutSegmentIntersection(gamutX, gamutY, 0, 0, blueX, blueY, redX, redY);
         
-        var mappedX = gamutX + whiteX;
-        var mappedY = gamutY + whiteY;
+        var mappedX = gamutX + _whitepointX;
+        var mappedY = gamutY + _whitepointY;
         
         if (_gamutPointOnSegment(intersection1.x, intersection1.y, redX, redY, greenX, greenY)) {
-            mappedX = intersection1.x + whiteX;
-            mappedY = intersection1.y + whiteY;
+            mappedX = intersection1.x + _whitepointX;
+            mappedY = intersection1.y + _whitepointY;
         }
         else if (_gamutPointOnSegment(intersection2.x, intersection2.y, greenX, greenY, blueX, blueY)) {
-            mappedX = intersection2.x + whiteX;
-            mappedY = intersection2.y + whiteY;
+            mappedX = intersection2.x + _whitepointX;
+            mappedY = intersection2.y + _whitepointY;
         }
         if (_gamutPointOnSegment(intersection3.x, intersection3.y, blueX, blueY, redX, redY)) {
-            mappedX = intersection3.x + whiteX;
-            mappedY = intersection3.y + whiteY;
+            mappedX = intersection3.x + _whitepointX;
+            mappedY = intersection3.y + _whitepointY;
         }
         
         var newY = _y;
@@ -224,14 +244,14 @@ function OKColor() constructor {
         //     debugSurf = surface_create(200, 200);
         // }
         
-        // gamutX += whiteX;
-        // gamutY += whiteY;
-        // redX += whiteX;
-        // redY += whiteY;
-        // greenX += whiteX;
-        // greenY += whiteY;
-        // blueX += whiteX;
-        // blueY += whiteY;
+        // gamutX += _whitepointX;
+        // gamutY += _whitepointY;
+        // redX += _whitepointX;
+        // redY += _whitepointY;
+        // greenX += _whitepointX;
+        // greenY += _whitepointY;
+        // blueX += _whitepointX;
+        // blueY += _whitepointY;
         
         // surface_set_target(debugSurf);
         // // draw_clear_alpha(c_black, 0);
@@ -239,7 +259,7 @@ function OKColor() constructor {
         // draw_line(redX * 200, redY * 200, greenX * 200, greenY * 200);
         // draw_line(greenX * 200, greenY * 200, blueX * 200, blueY * 200);
         // draw_line(blueX * 200, blueY * 200, redX * 200, redY * 200);
-        // // draw_line(gamutX * 200, gamutY * 200, whiteX * 200, whiteY * 200);
+        // // draw_line(gamutX * 200, gamutY * 200, _whitepointX * 200, _whitepointY * 200);
         
         // draw_circle(mappedX * 200, mappedY * 200, 4, false);
         // surface_reset_target();
@@ -251,7 +271,64 @@ function OKColor() constructor {
         });
     }
     
-    static _mapGamutRGBOKLCH = function()/*->struct*/ {
+    static _mapGamutRGBChroma = function()/*->struct*/ {
+        _updateLCH();
+        var cacheLCH = _cache[_OKColorModel.LCH];
+        var l = cacheLCH.l;
+        
+        if (l >= 100) return { r : 255, g : 255, b : 255 };
+        if (l <= 0) return { r : 0, g : 0, b : 0 };
+        
+        _updateRGB();
+        var cacheRGB = _cache[_OKColorModel.RGB];
+        
+        if (_inGamutRGB(cacheRGB)) {
+            return { r : cacheRGB.r, g : cacheRGB.g, b : cacheRGB.b };
+        }
+        
+        var jnd = 0.02;             // "just noticable difference"
+        var epsilon = 0.0001;
+        var minChroma = 0;
+        var maxChroma = cacheLCH.c;
+        var minInGamut = true;
+        
+        var current = clone();
+        var currentRGB = current.getRGB();
+        var clippedRGB = _clipGamutRGB(currentRGB);
+        var clipped = new OKColor().setRGB(clippedRGB.r, clippedRGB.g, clippedRGB.b);
+        
+        var deltaE = _deltaEOKLab(clipped.getOKLab(), current.getOKLab());
+        if (deltaE < jnd) return { r : clippedRGB.r, g : clippedRGB.g, b : clippedRGB.b };
+        
+        while (maxChroma - minChroma > epsilon) {
+            var chroma = (minChroma + maxChroma) / 2;
+            current.setLCH(, chroma);
+            currentRGB = current.getRGB();
+            
+            if (minInGamut && _inGamutRGB(currentRGB)) {
+                minChroma = chroma;
+            } else {
+                clippedRGB = _clipGamutRGB(currentRGB);
+                deltaE = _deltaEOKLab(clipped.getOKLab(), current.getOKLab());
+                
+                if (deltaE < jnd) {
+                    if (jnd - deltaE < epsilon) {
+                        return { r : clippedRGB.r, g : clippedRGB.g, b : clippedRGB.b };
+                    } else {
+                        minInGamut = false;
+                        minChroma = chroma;
+                    }
+                } else {
+                    maxChroma = chroma;
+                }
+            }
+        }
+        
+        clippedRGB = _clipGamutRGB(currentRGB);
+        return { r : clippedRGB.r, g : clippedRGB.g, b : clippedRGB.b };
+    }
+    
+    static _mapGamutRGBOKChroma = function()/*->struct*/ {
         _updateOKLCH();
         var cacheOKLCH = _cache[_OKColorModel.OKLCH];
         var l = cacheOKLCH.l;
@@ -427,10 +504,55 @@ function OKColor() constructor {
         if (!cacheLMS.cached) {
             var vector = matrix_transform_vertex(_matrixXYZtoLMS, _x, _y, _z);
             
-            cacheLMS.l = vector[0];
-            cacheLMS.m = vector[1];
-            cacheLMS.s = vector[2];
+            cacheLMS.l = max(0, vector[0]);
+            cacheLMS.m = max(0, vector[1]);
+            cacheLMS.s = max(0, vector[2]);
             cacheLMS.cached = true;
+        }
+    }
+    
+    static _updateLab = function() {
+        var cacheLab = _cache[_OKColorModel.Lab];
+        
+        if (!cacheLab.cached) {
+            var epsilon = 216/24389;
+            var k = 24389/27;
+            
+            var xNormalized = _x / _whitepoint.x;
+            var yNormalized = _y / _whitepoint.y;
+            var zNormalized = _z / _whitepoint.z;
+            
+            var fX = xNormalized > epsilon ? power(xNormalized, 1/3) : (k * xNormalized + 16) / 116;
+            var fY = yNormalized > epsilon ? power(yNormalized, 1/3) : (k * yNormalized + 16) / 116;
+            var fZ = zNormalized > epsilon ? power(zNormalized, 1/3) : (k * zNormalized + 16) / 116;
+            
+            cacheLab.l = 116 * fY - 16;
+            cacheLab.a = 500 * (fX - fY);
+            cacheLab.b = 200 * (fY - fZ);
+            cacheLab.cached = true;
+        }
+    }
+    
+    static _updateLCH = function() {
+        var cacheLCH = _cache[_OKColorModel.LCH];
+        
+        if (!cacheLCH.cached) {
+            _updateLab();
+            var cacheLab = _cache[_OKColorModel.Lab];
+            
+            var epsilon = 0.02;
+            var a = cacheLab.a;
+            var b = cacheLab.b;
+            
+            if (abs(a) < epsilon && abs(b) < epsilon) {
+                cacheLCH.h = NaN;
+            } else {
+                cacheLCH.h = (darctan2(b, a) + 360) % 360;
+            }
+            
+            cacheLCH.l = cacheLab.l;
+            cacheLCH.c = sqrt(a * a + b * b);
+            cacheLCH.cached = true;
         }
     }
     
@@ -578,6 +700,56 @@ function OKColor() constructor {
     
     static setLMS = function()/*->OKColor*/ {}
     
+    static setLab = function(lightness/*:number?*/ = undefined, a/*:number?*/ = undefined, b/*:number?*/ = undefined)/*->OKColor*/ {
+    	// update values in case of setting parameters partially
+        if (lightness == undefined || a == undefined || b == undefined) {
+            _updateLab();
+        }
+        
+        var cacheLab = _cache[_OKColorModel.OKLab];
+        cacheLab.l = lightness ?? cacheLab.l;
+        cacheLab.a = a ?? cacheLab.a;
+        cacheLab.b = b ?? cacheLab.b;
+        
+        _updateXYZfromLab(cacheLab);
+        
+        _setDirty();
+        cacheLab.cached = true;
+        
+        return self;
+    }
+    
+    static setLCH = function(lightness/*:number?*/ = undefined, chroma/*:number?*/ = undefined, hue/*:number?*/ = undefined)/*->OKColor*/ {
+        // update values in case of setting parameters partially
+        if (lightness == undefined || chroma == undefined || hue == undefined) {
+            _updateOKLCH();
+        }
+        
+        var cacheLCH = _cache[_OKColorModel.LCH];
+        cacheLCH.l = lightness ?? cacheLCH.l;
+        cacheLCH.c = chroma ?? cacheLCH.c;
+        cacheLCH.h = hue ?? cacheLCH.h;
+        
+        var cacheLab = _cache[_OKColorModel.Lab];
+        cacheLab.l = cacheLCH.l;
+        
+        if (is_nan(cacheLCH.h)) {
+            cacheLab.a = 0;
+            cacheLab.b = 0;
+        } else {
+			cacheLab.a = lengthdir_x(cacheLCH.c, cacheLCH.h);
+			cacheLab.b = -lengthdir_y(cacheLCH.c, cacheLCH.h);
+        }
+        
+        _updateXYZfromLab(cacheLab);
+        
+        _setDirty();
+        cacheLCH.cached = true;
+        cacheLab.cached = true;
+        
+        return self;
+    }
+    
     static setOKLab = function(lightness/*:number?*/ = undefined, a/*:number?*/ = undefined, b/*:number?*/ = undefined)/*->OKColor*/ {
         // update values in case of setting parameters partially
         if (lightness == undefined || a == undefined || b == undefined) {
@@ -677,6 +849,18 @@ function OKColor() constructor {
     }
     
     static getLMS = function()/*->struct*/ {}
+    
+    static getLab = function()/*->struct*/ {
+        _updateLab();
+        var cacheLab = _cache[_OKColorModel.Lab];
+        return { l : cacheLab.l, a : cacheLab.a, b : cacheLab.b };
+    }
+    
+    static getLCH = function()/*->struct*/ {
+        _updateLCH();
+        var cacheLCH = _cache[_OKColorModel.LCH];
+        return { l : cacheLCH.l, c : cacheLCH.c, h : cacheLCH.h };
+    }
     
     static getOKLab = function()/*->struct*/ {
         _updateOKLab();

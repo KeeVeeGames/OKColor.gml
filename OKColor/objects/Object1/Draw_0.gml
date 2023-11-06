@@ -65,7 +65,7 @@ if (!surface_exists(surf1)) {
     for (var i = 0; i < 360; i++) {
         var hue = i;
         // show_debug_message(hue);
-        color1.setHSL(hue, mouse_y / 500, mouse_x / 500);
+        // color1.setHSL(hue, mouse_y / 500, mouse_x / 500);
         var rgb = color1.colorRGB(OKColorMapping.Clip);
         // show_debug_message(rgb);
         draw_set_color(make_color_rgb(rgb.r, rgb.g, rgb.b));
@@ -84,7 +84,7 @@ if (!surface_exists(surf2)) {
     for (var i = val; i < val + 360; i++) {
         var h = (29.2338851923426 + i) % 360;
         color2.setOKLCH(, , h);
-        var rgb = color2.colorRGB(OKColorMapping.Geometric);
+        var rgb = color2.colorRGB(OKColorMapping.Chroma);
         // show_debug_message(rgb);
         draw_set_color(make_color_rgb(rgb.r, rgb.g, rgb.b));
         draw_rectangle(i * 2, 0, i * 2 + 1, 80, false);
@@ -99,7 +99,7 @@ if (!surface_exists(surf3)) {
     for (var i = 0; i < 360; i++) {
         var h = (29.2338851923426 + i) % 360;
         color2.setOKLCH(, , h);
-        var rgb = color2.colorRGB(OKColorMapping.OKLCH);
+        var rgb = color2.colorRGB(OKColorMapping.OKChroma);
         // var rgb = color2.getRGB();
         // show_debug_message(rgb);
         draw_set_color(make_color_rgb(rgb.r, rgb.g, rgb.b));

@@ -1,14 +1,10 @@
-color1 = new OKColor().setOKLCH(0.7493, 0.1268, 0);
+color1 = new OKColor().setLCH(66.14, 72.61, 52.91);
 color2 = new OKColor().setOKLCH(0.7493, 0.1268, 0);
 // color2 = new OKColor().setLinearRGB(0.5775804404, 0.1274376804, 0.3049873141);
 
 color3 = color1.clone();
 
-var whitepoint = new OKColor().setRGB(255, 255, 255).getXYZ();
-
-show_debug_message(string_format(whitepoint.x / (whitepoint.x + whitepoint.y + whitepoint.z), 0, 6));
-show_debug_message(string_format(whitepoint.y / (whitepoint.x + whitepoint.y + whitepoint.z), 0, 6));
-// show_debug_message(new OKColor().setRGB(0, 255, 0)._mapGamutRGBQuick());
+show_debug_message(color1.getLCH());
 // show_debug_message(new OKColor().setRGB(0, 0, 255)._mapGamutRGBQuick());
 
 surf1 = /*#cast*/ -1;    /// @is {surface}
