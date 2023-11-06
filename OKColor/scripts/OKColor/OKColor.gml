@@ -20,6 +20,7 @@ enum _OKColorModel {
 }
 
 enum OKColorMapping {
+    None,           /// @is {function<void>}
     Clip,           /// @is {function<void>}
     Geometric,      /// @is {function<void>}
     Chroma,         /// @is {function<void>}
@@ -28,13 +29,15 @@ enum OKColorMapping {
 }
 
 enum OKColorMixing {
-    RGB,            /// @is {function<void>}
-    Lab,            /// @is {function<void>}
-    OKLab,          /// @is {function<void>}
+    RGB,            /// @is {function<OKColor, number, void>}
+    Lab,            /// @is {function<OKColor, number, void>}
+    OKLab,          /// @is {function<OKColor, number, void>}
 }
 
 /// @description Description
 function OKColor() constructor {
+    /// @hint new OKColor()
+    
     /// @ignore
     _x = 0;
     /// @ignore
@@ -55,18 +58,28 @@ function OKColor() constructor {
     _cache[_OKColorModel.OKLCH] = { cached : true, l : 0, c : 0, h : 0 };
     
     /// @ignore
-    _gamutMapping = /*#cast*/ array_create(OKColorMapping._sizeof);      /// @is {enum_tuple<OKColorMapping>}
+    static _gamutMapping = /*#cast*/ array_create(OKColorMapping._sizeof);      /// @is {enum_tuple<OKColorMapping>}
+    _gamutMapping[OKColorMapping.None] = _mapGamutNone;
     _gamutMapping[OKColorMapping.Clip] = _mapGamutRGBClip;
     _gamutMapping[OKColorMapping.Geometric] = _mapGamutRGBGeometric;
     _gamutMapping[OKColorMapping.Chroma] = _mapGamutRGBChroma;
     _gamutMapping[OKColorMapping.OKChroma] = _mapGamutRGBOKChroma;
     
     /// @ignore
-    _gamutMappingDefault = OKColorMapping.OKChroma;     /// @is {int<OKColorMapping>}
+    static _colorMixing = /*#cast*/ array_create(OKColorMixing.OKLab);      /// @is {enum_tuple<OKColorMixing>}
+    _colorMixing[OKColorMixing.RGB] = _mixRGB;
+    _colorMixing[OKColorMixing.Lab] = _mixLab;
+    _colorMixing[OKColorMixing.OKLab] = _mixOKLab;
+    
     /// @ignore
-    _gamutMappedColorCache = undefined;                 /// @is {OKColor?}
+    static _gamutMappingDefault = OKColorMapping.OKChroma;      /// @is {int<OKColorMapping>}
     /// @ignore
-    _gamutMappedColorCacheId = -1;                      /// @is {int<OKColorMapping>}
+    _gamutMappedColorCache = undefined;                         /// @is {OKColor?}
+    /// @ignore
+    _gamutMappedColorCacheId = -1;                              /// @is {int<OKColorMapping>}
+    
+    /// @ignore
+    static _colorMixingDefault = OKColorMixing.OKLab;           /// @is {int<OKColorMixing>}
     
     /// @ignore
     static _whitepointX = 0.3127;
@@ -240,6 +253,9 @@ function OKColor() constructor {
     #endregion
     
     #region Gamut mapping
+    
+    /// @ignore
+    static _mapGamutNone = function()/*->void*/ {}
     
     /// @ignore
     static _mapGamutRGBClip = function()/*->void*/ {
@@ -423,6 +439,51 @@ function OKColor() constructor {
     
     #region Color mixing
     
+    /// @ignore
+    static _mixRGB = function(mixColor/*:OKColor*/, amount/*:number*/)/*->void*/ {
+        _updateRGB();
+        var cacheRGB1 = _cache[_OKColorModel.RGB];
+        
+        mixColor._updateRGB();
+        var cacheRGB2 = mixColor._cache[_OKColorModel.RGB];
+        
+        setRGB(
+            lerp(cacheRGB1.r, cacheRGB2.r, amount),
+            lerp(cacheRGB1.g, cacheRGB2.g, amount),
+            lerp(cacheRGB1.b, cacheRGB2.b, amount)
+        );
+    }
+    
+    /// @ignore
+    static _mixLab = function(mixColor/*:OKColor*/, amount/*:number*/)/*->void*/ {
+        _updateLab();
+        var cacheLab1 = _cache[_OKColorModel.Lab];
+        
+        mixColor._updateLab();
+        var cacheLab2 = mixColor._cache[_OKColorModel.Lab];
+        
+        setLab(
+            lerp(cacheLab1.l, cacheLab2.l, amount),
+            lerp(cacheLab1.a, cacheLab2.a, amount),
+            lerp(cacheLab1.b, cacheLab2.b, amount)
+        );
+    }
+    
+    /// @ignore
+    static _mixOKLab = function(mixColor/*:OKColor*/, amount/*:number*/)/*->void*/ {
+        _updateOKLab();
+        var cacheOKLab1 = _cache[_OKColorModel.OKLab];
+        
+        mixColor._updateOKLab();
+        var cacheOKLab2 = mixColor._cache[_OKColorModel.OKLab];
+        
+        setOKLab(
+            lerp(cacheOKLab1.l, cacheOKLab2.l, amount),
+            lerp(cacheOKLab1.a, cacheOKLab2.a, amount),
+            lerp(cacheOKLab1.b, cacheOKLab2.b, amount)
+        );
+    }
+    
     #endregion
     
     #region Updates
@@ -432,7 +493,7 @@ function OKColor() constructor {
         _gamutMappedColorCache ??= new OKColor();
         
         if (_gamutMappedColorCacheId != gamutMapping) {
-            method(self, _gamutMapping[gamutMapping])();
+            method(self, _gamutMapping[gamutMapping] /*#as function<void>*/)();
             _gamutMappedColorCacheId = gamutMapping;
         }
     }
@@ -1303,42 +1364,54 @@ function OKColor() constructor {
     /// @returns {Struct.OKColor}
     /// @description Description
     static cloneMapped = function(gamutMapping/*:int<OKColorMapping>*/ = _gamutMappingDefault)/*->OKColor*/ {
-        /// @hint OKColor:cloneMapped(gamutMapping:int<OKColorMapping>)->OKColor
+        /// @hint OKColor:cloneMapped(?gamutMapping:int<OKColorMapping>)->OKColor
         
         _updateMapped(gamutMapping);
         
         return variable_clone((_gamutMappedColorCache /*#as OKColor*/));
     }
     
-    static mix = function(mixColor/*:OKColor*/, amount/*:number*/, gamutMapping/*:int<OKColorMapping>*/ = _gamutMappingDefault)/*->OKColor*/ {
+    /// @function mix()
+    /// @self OKColor
+    /// @param {Struct.OKColor} mixColor Description
+    /// @param {Real} amount Description
+    /// @param {Enum.OKColorMixing} [colorMixing] Description
+    /// @param {Enum.OKColorMapping} [gamutMapping] Description
+    /// @returns {Struct.OKColor}
+    /// @description Description
+    static mix = function(mixColor/*:OKColor*/, amount/*:number*/, colorMixing/*:int<OKColorMixing>*/ = _colorMixingDefault, gamutMapping/*:int<OKColorMapping>*/ = _gamutMappingDefault)/*->OKColor*/ {
+        /// @hint OKColor:mix(mixColor:OKColor, amount:number, ?colorMixing:int<OKColorMixing>?, ?gamutMapping:int<OKColorMapping>?)->OKColor
+        
+        // pre-mapping gives generally better results than after-mapping, with no "flat" colors
         _updateMapped(gamutMapping);
         mixColor._updateMapped(gamutMapping);
         
-        // _updateOKLab();
-        // var cacheOKLab1 = _cache[_OKColorModel.OKLab];
-        
-        // mixColor._updateOKLab();
-        // var cacheOKLab2 = mixColor._cache[_OKColorModel.OKLab];
-        
-        // setOKLab(
-        //     lerp(cacheOKLab1.l, cacheOKLab2.l, amount),
-        //     lerp(cacheOKLab1.a, cacheOKLab2.a, amount),
-        //     lerp(cacheOKLab1.b, cacheOKLab2.b, amount)
-        // );
-        
-        _updateLab();
-        var cacheLab1 = _cache[_OKColorModel.Lab];
-        
-        mixColor._updateLab();
-        var cacheLab2 = mixColor._cache[_OKColorModel.Lab];
-        
-        setLab(
-            lerp(cacheLab1.l, cacheLab2.l, amount),
-            lerp(cacheLab1.a, cacheLab2.a, amount),
-            lerp(cacheLab1.b, cacheLab2.b, amount)
-        );
+        method(self, _colorMixing[colorMixing] /*#as function<OKColor, number, void>*/)(mixColor, amount);
         
         return self;
+    }
+    
+    /// @function cloneMixed()
+    /// @self OKColor
+    /// @pure
+    /// @param {Struct.OKColor} mixColor Description
+    /// @param {Real} amount Description
+    /// @param {Enum.OKColorMixing} [colorMixing] Description
+    /// @param {Enum.OKColorMapping} [gamutMapping] Description
+    /// @returns {Struct.OKColor}
+    /// @description Description
+    static cloneMixed = function(mixColor/*:OKColor*/, amount/*:number*/, colorMixing/*:int<OKColorMixing>*/ = _colorMixingDefault, gamutMapping/*:int<OKColorMapping>*/ = _gamutMappingDefault)/*->OKColor*/ {
+        /// @hint OKColor:cloneMixed(mixColor:OKColor, amount:number, ?colorMixing:int<OKColorMixing>?, ?gamutMapping:int<OKColorMapping>?)->OKColor
+        
+        var newColor = variable_clone(self) /*#as OKColor*/;
+        
+        // pre-mapping gives generally better results than after-mapping, with no "flat" colors
+        newColor._updateMapped(gamutMapping);
+        mixColor._updateMapped(gamutMapping);
+        
+        method(newColor, _colorMixing[colorMixing] /*#as function<OKColor, number, void>*/)(mixColor, amount);
+        
+        return newColor;
     }
     
     #endregion

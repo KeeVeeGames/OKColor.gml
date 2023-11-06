@@ -1,10 +1,11 @@
-color1 = new OKColor().setOKLCH(0.5445, 0.291, 191.65);
-color2 = new OKColor().setOKLCH(0.7493, 0.1268, 0);
-color3 = new OKColor().setColor(#45FF76);
+color1 = new OKColor().setOKLCH(0.5445, 0.205, 24.35);
+color2 = new OKColor().setOKLCH(0.4496, 0.242, 265.76);
+color3 = new OKColor().setOKLCH(0.4496, 0.242, 265.76);
 
 // // color2 = new OKColor().setLinearRGB(0.5775804404, 0.1274376804, 0.3049873141);
 
-show_debug_message(color1.getLab());
+show_debug_message(color1.getRGB());
+show_debug_message(color3.getRGB());
 
 surf1 = /*#cast*/ -1;    /// @is {surface}
 surf2 = /*#cast*/ -1;    /// @is {surface}
