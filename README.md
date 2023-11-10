@@ -15,7 +15,7 @@ The problem with the standard RGB and HSV models is that they're not taking into
 
 For example, two colors that only differs in `hue`, won't be consistent for our eye and seems like they have different `saturation`/`value` also, despite having the same ones in the code. The `hue` itself is also not ideal: it distributes colors unevenly, meaning adding the same amount of hue to different colors won't "move" them to the same distance in the color wheel. To overcome these issues many attempts were made to create a perceptually correct color model with the most recent one being the "OK" family of color models.
 
-OKLab is the parental starting point and is based on another perceptual model named CIELab fixing some of its flaws. OKLCH is another member of the family and just a representation of OKLab in a "cylindrical" form, meaning it has the same relation to OKLab as HSV has to RGB, acting as its better alternative. `L` represents `lightness` as the loose analogue of `value` in HSV, `C` is the `chroma` which is equal to `saturation` and `H` as in the `hue`.  
+OKLab is the parental starting point and is based on another perceptual model named CIELab fixing some of its flaws. OKLCH is another member of the family and just a representation of OKLab in a "cylindrical" form, meaning it has the same relation to OKLab as HSV has to RGB, acting as its better alternative. Where `L` represents `lightness` as the loose analogue of `value` in HSV, `C` is the `chroma` which is equal to `saturation` and `H` as in the `hue`.  
 
 > [!NOTE]
 > Provided examples may read incorrectly if you have a badly calibrated display and or non-trichromatic color vision.
@@ -46,7 +46,7 @@ Let's say you want some features on your character sprite to be recolored in-gam
 
 ![figure_1_4_character_palette](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/8fb9fc13-f448-4701-b177-2147f413bb55)
 
-With OKLCH the lightness is consistent throughout all the hue changes, shadows and highlights don't disappear and colors themselves are more pleasing. This extends to all other components: you can be sure that colors with the same 
+With OKLCH the lightness is consistent throughout all the hue changes, shadows and highlights don't disappear and colors themselves are more pleasing. This extends to all other components: you can be sure that colors with the same `chroma` will have the same perceptual hue, unlike HSV which tends to shift hue when brightness is changed (for example making blue become [more purple]() when increasing `value`).
 
 #### Predictable different colors
 
@@ -124,3 +124,4 @@ Fairchild, Mark D. (2013) "[Color Appearance Models](https://onlinelibrary.wiley
 Verou, Lea and Lilley, Chris (2023) "[Color.js](https://github.com/LeaVerou/color.js)"  
 Atkins Jr., T., Lilley, C., Verou, L., and Baron, D. (2021) "[CSS Color Module Level 4](https://www.w3.org/TR/css-color-4/)", W3C  
 Lilley, C., Kravets, U., Verou, L., and Argyle, A. (2022) "[CSS Color Module Level 5](https://www.w3.org/TR/css-color-5/)", W3C  
+Levien, Raph (2021) "[An interactive review of Oklab](https://raphlinus.github.io/color/2021/01/18/oklab-critique.html)"
