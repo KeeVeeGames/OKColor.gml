@@ -53,15 +53,19 @@ Otherwise, if instead you *need* the difference in color qualities such as for b
 
 For example, you want to color-code different collectables: blue one is standard, green is lighter and red is darker to make it easier for subconscious distinction and more accessible for color-blind people. You can generate the colors in HSV (note how the `value` drops by 10% for every next color to make it darker):
 
-* Green: `hsv(120, 80%, 80%)`
-* Blue: `hsv(180, 80%, 70%)`
-* Red: `hsv(0, 80%, 60%)`
+| HSV | hue | saturation | value |
+| - | - | - | - |
+| **green** | 120 | 80% | 90% |
+| **blue** | 180 | 80% | 80% |
+| **red** | 0 | 80% | 70% |
 
 You can also generate three colors with OKLCH in a similar way (`lightness` is also decreased by 10% each time):
 
-* Green: `oklch(75%, 0.18, 142)`
-* Blue: `oklch(65%, 0.18, 202)`
-* Red: `oklch(55%, 0.18, 27)`
+| OKLCH | lightness | chroma | hue |
+| - | - | - | - |
+| **green** | 75% | 0.18 | 142 |
+| **blue** | 65% | 0.18 | 202 |
+| **red** | 55% | 0.18 | 27 |
 
 And apply these colors to a collectable sprite:
 
