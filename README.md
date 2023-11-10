@@ -74,6 +74,8 @@ And apply these colors to a collectable sprite:
 
 Testing would reveal that HSV results are not predictable: with the red appearing much darker than intended, and green and blue seemingly having similar brightness. OKLCH, on the other hand, provides more consistent and reasonable results, with each subsequent color being equally darker than the previous one, complementing the 10% change.
 
+#### Palettes for GUI
+
 ### Mixing the colors
 
 Perceptual models can be also beneficial when generating gradients or blending colors gradually over time. GameMaker's `merge_color` uses RGB model to mix colors and may suffer from the same disadvantages of unpredictable color qualities, non-linear distribution and component shifts. OKColor offers additional methods for mixing colors perceptually using Lab and OKLab models.
