@@ -37,7 +37,7 @@ Converting both examples to perceptual grayscale shows the lightness flaws more 
 
 ### Generating new colors
 
-Usually, the choice of specific colors in the game is made manually by the game artists or art directors. However, there are some cases where colors need to be generated dynamically. This could be due to the specifics of a particular visual effect, a large number of assets requiring recolor or user-inputted customization. So, if you're generating color palettes for your game in-code and need consistent and predictable outcomes you should use this library with the perceptual color model.
+Usually, the choice of specific colors in the game is made manually by the game artists or art directors. However, there are some cases where colors need to be generated dynamically. This could be due to the specifics of a particular visual effect, a large number of assets requiring recolor or user-inputted customization. So, if you're generating color palettes for your game in-code and need consistent and predictable outcomes you should consider using this library with the perceptual color model (preferably OKLCH) instead of standard `make_color_rgb` and `make_color_hsv`.
 
 #### Consistent matching colors
 
@@ -76,10 +76,26 @@ Testing would reveal that HSV results are not predictable: with the red appearin
 
 ### Mixing the colors
 
-
+Perceptual models can be also beneficial when generating gradients or blending colors gradually over time. GameMaker's `merge_color` uses RGB model to mix colors and may suffer from the same disadvantages of unpredictable color qualities, non-linear distribution and hue shifts. OKColor offers additional methods for mixing colors perceptually using Lab and OKLab models.
 
 > [!IMPORTANT]
-> Crucial information necessary for users to succeed.
+> Color mixing is a peculiar case. While it's almost universally better to use the advanced OKLab/OKLCH model for generating new colors, blending colors can perform better with a simpler Lab/LCH model or even the standard RGB for certain requirements. Make your decision based on tests with your specific colors and/or provided examples.
+
+Here are some examples of gradients made in RGB, OKLab and Lab:
+
+![figure_1_6_red_green_gradient](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/54a412c9-1e93-4e11-8971-3ad252e0a066)&nbsp;
+![figure_1_7_aqua_gred_gradient](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/5ea8d41f-2c69-41b2-a359-19b1308885ae)
+
+
+
+![figure_1_8_green_purple_gradient](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/1415165f-31ad-4a00-9c8e-a2a2437dbc72)&nbsp;
+![figure_1_9_blue_yellow_gradient](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/3df8bbee-5ba0-40c2-a47c-3e952445ccae)
+
+
+![figure_1_10_blue_white_gradient](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/5291ea92-e3cd-42cc-a55b-fb624eca7bd3)&nbsp;
+![figure_1_11_black_white_gradient](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/5507afb0-981f-4c26-9ed3-e1d09aba66ab)
+
+
 
 > [!WARNING]
 > Critical content demanding immediate user attention due to potential risks.
