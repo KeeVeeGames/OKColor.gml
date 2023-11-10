@@ -59,9 +59,9 @@ For example, you want to color-code different collectables: make blue one standa
 
 You can also generate three colors in OKLCH pretty much the same way, where `L` represents lightness, a loose analogue of value, `C` is chroma/saturation and `H` is hue (lightness is also decreased by 10% each time):
 
-* Green: `OKLCH(75%, 0.18, 142)`
-* Blue: `OKLCH(65%, 0.18, 202)`
-* Red: `OKLCH(55%, 0.18, 27)`
+* Green: `oklch(75%, 0.18, 142)`
+* Blue: `oklch(65%, 0.18, 202)`
+* Red: `oklch(55%, 0.18, 27)`
 
 And apply these colors to collectable sprite:
 
