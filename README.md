@@ -22,11 +22,11 @@ OKLab is the starting point of it and is inspired by a perceptual model called C
 
 Here is an example of a gradient generated with HSV model, all colors have the same `saturation` and `value` and showing all the possible `hue`:
 
-![figure_1_1_hsv_gradient](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/9489a697-3c70-4807-99c1-e3faeff79839)
+![figure_1_1_hsv_gradient](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/a2ce94e9-d6a3-40e7-828f-20de9a7ca4bd)
 
 And here is another one, generated with the *perceptually uniform* OKLCH model with the same `lightness` and `chroma` and different `hue` giving more consistent color, reflecting how human vision works:
 
-![figure_1_2_oklch_gradient](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/b04bf7ce-a1c1-44b9-b8fe-39b75e650b45)
+![figure_1_2_oklch_gradient](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/aa3a1551-55ef-4ff0-8a19-a482aeaacf65)
 
 Notice how there are differences in lightness for different hues in the top one and how the hue itself is distributed unevenly.
 
@@ -41,11 +41,11 @@ Usually, the choice of specific colors in the game is made manually by the game 
 
 #### Consistent matching colors
 
-Let's say you want to recolor specific features of your character sprite in-game. One way is to generate a new palette using a basic `hue` shift in the HSV space. Another option is to use the OKLCH model and apply a `chroma` shift. This latter approach often provides more appealing results:
+Let's say you want to recolor specific features of your character sprite in-game. One way is to generate a new palette using a basic `hue` shift in the HSV space. Another option is to use the OKLCH model and apply a `hue` shift there. This latter approach often provides more appealing results:
 
 ![figure_1_4_character_palette](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/8fb9fc13-f448-4701-b177-2147f413bb55)
 
-With OKLCH the lightness is consistent throughout all the hue changes, shadows and highlights remain intact, and the overall visual is enhanced. This extends to all other components: you can be sure that colors with the same `chroma` will have the same perceptual hue, unlike HSV which tends to shift hue when brightness is changed (for example making blue become [more purple]() when increasing `value`).
+With OKLCH the lightness is consistent throughout all the hue changes, shadows and highlights remain intact, and the overall visual is enhanced. This extends to other components: you can be sure that colors with the same `hue` will have the same perceptual hue, unlike HSV which tends to shift it when brightness is changed (for example making blue become [more purple]() when increasing `value`).
 
 #### Predictable different colors
 
@@ -69,6 +69,10 @@ And apply these colors to a collectable sprite:
 ![figure_1_5_orbs_grayscale](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/d5c64c46-bae9-438c-b108-69a72044b9e1)
 
 Testing would reveal that HSV results are not predictable: with the red appearing much darker than intended, and green and blue seemingly having similar brightness. OKLCH, on the other hand, provides more consistent and reasonable results, with each subsequent color being equally darker than the previous one, complementing the 10% change.
+
+### Mixing the colors
+
+
 
 > [!IMPORTANT]
 > Crucial information necessary for users to succeed.
