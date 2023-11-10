@@ -26,7 +26,7 @@ Here is an example of a gradient generated with HSV model, all colors have the s
 
 And here is another one, generated with the *perceptually uniform* OKLCH model with the same `lightness` and `chroma` and different `hue` giving more consistent color, reflecting how human vision works:
 
-![figure_1_2_oklch_gradient](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/aa3a1551-55ef-4ff0-8a19-a482aeaacf65)
+![figure_1_2_oklch_gradient](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/6ee892c5-2a97-46db-ab7c-7e8f2e219b8d)
 
 Notice how there are differences in lightness for different hues in the top one and how the hue itself is distributed unevenly.
 
@@ -65,8 +65,8 @@ You can also generate three colors with OKLCH in a similar way (`lightness` is a
 
 And apply these colors to a collectable sprite:
 
-![figure_1_5_orbs](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/0dc66818-310f-48a2-b2ee-5e7847c2253b)&nbsp;
-![figure_1_5_orbs_grayscale](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/d5c64c46-bae9-438c-b108-69a72044b9e1)
+![figure_1_5_orbs](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/bf9dd9fe-f647-4cb5-adfd-f762f94b3666)&nbsp;
+![figure_1_5_orbs_grayscale](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/4715a388-91f1-4d0b-bc4f-3b56a52c8b24)
 
 Testing would reveal that HSV results are not predictable: with the red appearing much darker than intended, and green and blue seemingly having similar brightness. OKLCH, on the other hand, provides more consistent and reasonable results, with each subsequent color being equally darker than the previous one, complementing the 10% change.
 
