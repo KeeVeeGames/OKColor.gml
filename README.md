@@ -81,22 +81,28 @@ Perceptual models can be also beneficial when generating gradients or blending c
 > [!IMPORTANT]
 > Color mixing is a peculiar case. While it's almost universally better to use the advanced OKLab/OKLCH model for generating new colors, blending colors can perform better with a simpler Lab/LCH model or even the standard RGB for certain requirements. Make your decision based on tests with your specific colors and/or provided examples.
 
-Here are some examples of gradients made in RGB, OKLab and Lab:
+Here are some examples of gradients created in RGB, OKLab and Lab:
 
 ![figure_1_6_red_green_gradient](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/54a412c9-1e93-4e11-8971-3ad252e0a066)&nbsp;
 ![figure_1_7_aqua_gred_gradient](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/5ea8d41f-2c69-41b2-a359-19b1308885ae)
 
-Notice how RGB gives ugly gray-ish colors in the middle, while perceptive ones provide more consistent results. The Lab variant can also give a bit more saturation.
+Take a look at how RGB produces ugly dark colors in the middle, whereas perceptual models yield more consistent results. The Lab variant can also provide a bit more saturation.
 
 ![figure_1_8_green_purple_gradient](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/1415165f-31ad-4a00-9c8e-a2a2437dbc72)&nbsp;
 ![figure_1_9_blue_yellow_gradient](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/3df8bbee-5ba0-40c2-a47c-3e952445ccae)
 
-For the colors that a fairly far from each other on a hue wheel, Lab starts to perform a hue shift which is not presented in OKLab. However, it may be used if it suits your requirements of mixing with moving along the hue.
+When dealing with colors that are fairly distant from each other on the hue wheel, Lab introduces a hue shift that is not present in OKLab. However, you can use it if it aligns with your requirements for mixing while moving along the hue.
 
 ![figure_1_10_blue_white_gradient](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/5291ea92-e3cd-42cc-a55b-fb624eca7bd3)&nbsp;
 ![figure_1_11_black_white_gradient](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/5507afb0-981f-4c26-9ed3-e1d09aba66ab)
 
-Gradients that go to white show intensive hue shifts for some colors like in this example which is virtually always not needed, so the OKLab should be used instead. The black and white variant also shows a difference in the linear distribution of OKLab and non-linearity of RGB and Lab.
+Gradients that transition to white exhibit significant hue shifts for some colors, as shown in this example, which is usually unnecessary. In such cases, OKLab should be preferred. The black and white variant also highlights the difference in the linear distribution of OKLab and the non-linearity of RGB and Lab.
+
+## Installation
+
+## How to use
+
+## More info
 
 > [!WARNING]
 > Critical content demanding immediate user attention due to potential risks.
@@ -134,6 +140,9 @@ graph TD;
   * D50 white point for XYZ for better consistency?
 * ### HWB color model?
 * ### Shader function equivalents of generating and mixing colors?
+
+## Author:
+Nikita Musatov - [MusNik / KeeVee Games](https://twitter.com/keeveegames)
 
 ## References
 Sitnik, A. and Turner, T. (2022) "[OKLCH in CSS: why we moved from RGB and HSL](https://evilmartians.com/chronicles/oklch-in-css-why-quit-rgb-hsl)"  
