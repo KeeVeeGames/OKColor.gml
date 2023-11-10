@@ -43,7 +43,7 @@ Usually, the choice of specific colors in the game is made manually by the game 
 
 Let's say you want to recolor specific features of your character sprite in-game. One way is to generate a new palette using a basic `hue` shift in the HSV space. Another option is to use the OKLCH model and apply a `hue` shift there. This latter approach often provides more appealing results:
 
-![figure_1_4_character_palette](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/8fb9fc13-f448-4701-b177-2147f413bb55)
+![figure_1_4_character_palette](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/f547f063-48c1-442b-9db4-fd982cb91fc9)
 
 With OKLCH the lightness is consistent throughout all the hue changes, shadows and highlights remain intact, and the overall visual is enhanced. This extends to other components: you can be sure that colors with the same `hue` will have the same perceptual hue, unlike HSV which tends to shift it when brightness is changed (for example making blue become [more purple]() when increasing `value`).
 
@@ -69,14 +69,14 @@ You can also generate three colors with OKLCH in a similar way (`lightness` is a
 
 And apply these colors to a collectable sprite:
 
-![figure_1_5_orbs](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/bf9dd9fe-f647-4cb5-adfd-f762f94b3666)&nbsp;
-![figure_1_5_orbs_grayscale](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/4715a388-91f1-4d0b-bc4f-3b56a52c8b24)
+![figure_1_5_orbs](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/2f2acefc-5463-423a-969c-e6dd81dff3da)&nbsp;
+![figure_1_5_orbs_grayscale](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/b350d477-0a76-424a-a316-76e91517dee3)
 
 Testing would reveal that HSV results are not predictable: with the red appearing much darker than intended, and green and blue seemingly having similar brightness. OKLCH, on the other hand, provides more consistent and reasonable results, with each subsequent color being equally darker than the previous one, complementing the 10% change.
 
 ### Mixing the colors
 
-Perceptual models can be also beneficial when generating gradients or blending colors gradually over time. GameMaker's `merge_color` uses RGB model to mix colors and may suffer from the same disadvantages of unpredictable color qualities, non-linear distribution and hue shifts. OKColor offers additional methods for mixing colors perceptually using Lab and OKLab models.
+Perceptual models can be also beneficial when generating gradients or blending colors gradually over time. GameMaker's `merge_color` uses RGB model to mix colors and may suffer from the same disadvantages of unpredictable color qualities, non-linear distribution and component shifts. OKColor offers additional methods for mixing colors perceptually using Lab and OKLab models.
 
 > [!IMPORTANT]
 > Color mixing is a peculiar case. While it's almost universally better to use the advanced OKLab/OKLCH model for generating new colors, blending colors can perform better with a simpler Lab/LCH model or even the standard RGB for certain requirements. Make your decision based on tests with your specific colors and/or provided examples.
@@ -86,16 +86,17 @@ Here are some examples of gradients made in RGB, OKLab and Lab:
 ![figure_1_6_red_green_gradient](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/54a412c9-1e93-4e11-8971-3ad252e0a066)&nbsp;
 ![figure_1_7_aqua_gred_gradient](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/5ea8d41f-2c69-41b2-a359-19b1308885ae)
 
-
+Notice how RGB gives ugly gray-ish colors in the middle, while perceptive ones provide more consistent results. The Lab variant can also give a bit more saturation.
 
 ![figure_1_8_green_purple_gradient](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/1415165f-31ad-4a00-9c8e-a2a2437dbc72)&nbsp;
 ![figure_1_9_blue_yellow_gradient](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/3df8bbee-5ba0-40c2-a47c-3e952445ccae)
 
+For the colors that a fairly far from each other on a hue wheel, Lab starts to perform a hue shift which is not presented in OKLab. However, it may be used if it suits your requirements of mixing with moving along the hue.
 
 ![figure_1_10_blue_white_gradient](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/5291ea92-e3cd-42cc-a55b-fb624eca7bd3)&nbsp;
 ![figure_1_11_black_white_gradient](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/5507afb0-981f-4c26-9ed3-e1d09aba66ab)
 
-
+Gradients that go to white show intensive hue shifts for some colors like in this example which is virtually always not needed, so the OKLab should be used instead. The black and white variant also shows a difference in the linear distribution of OKLab and non-linearity of RGB and Lab.
 
 > [!WARNING]
 > Critical content demanding immediate user attention due to potential risks.
