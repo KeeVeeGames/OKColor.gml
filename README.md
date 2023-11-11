@@ -76,6 +76,12 @@ Testing would reveal that HSV results are not predictable: with the red appearin
 
 #### Palettes for GUI
 
+Aside from actual gameplay graphics, OKLCH is valuable for generating colors for elements initially colored in code, such as text and GUI elements. It's not without reason that this model is emerging as a new standard for CSS. With it, you can define a formula, choose a few colors, and automatically generate an entire design system palette.
+
+You can learn more on that here:  
+https://stripe.com/blog/accessible-color-systems  
+https://huetone.ardov.me/
+
 ### Mixing the colors
 
 Perceptual models can be also beneficial when generating gradients or blending colors gradually over time. GameMaker's `merge_color` uses RGB model to mix colors and may suffer from the same disadvantages of unpredictable color qualities, non-linear distribution and component shifts. OKColor offers additional methods for mixing colors perceptually using Lab and OKLab models.
@@ -102,7 +108,12 @@ Gradients that transition to white exhibit significant hue shifts for some color
 
 ## Installation
 
+Copy the [OKColor](https://github.com/KeeVeeGames/OKColor.gml/blob/main/OKColor/scripts/OKColor/OKColor.gml) script into your project.   
+Or get the latest asset package from the [releases page](https://github.com/KeeVeeGames/OKColor.gml/releases) and import it into IDE.
+
 ## How to use
+
+
 
 ## More info
 
