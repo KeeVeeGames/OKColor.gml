@@ -162,7 +162,7 @@ For deep info on extended functionality about setters, getters, mixing, gamut ma
   * [Mixing](https://github.com/KeeVeeGames/OKColor.gml/wiki/API-Reference#mixing)
   * [Cloning](https://github.com/KeeVeeGames/OKColor.gml/wiki/API-Reference#cloning)
 * [Architecture](https://github.com/KeeVeeGames/OKColor.gml/wiki/Architecture)
-* [How to contribute](https://github.com/KeeVeeGames/OKColor.gml/wiki/How-to-contribute)
+* [How to contribute](https://github.com/KeeVeeGames/OKColor.gml/blob/main/CONTRIBUTING.md)
 
 ## TODO:
 * ### ["Missing" color components](https://www.w3.org/TR/css-color-4/#missing)
