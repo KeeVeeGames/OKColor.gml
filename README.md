@@ -154,31 +154,15 @@ For deep info on extended functionality about setters, getters, mixing, gamut ma
 
 ## More info
 
-* (API Reference)[https://github.com/KeeVeeGames/OKColor.gml/wiki/API-Reference]
-  * (Setters)[https://github.com/KeeVeeGames/OKColor.gml/wiki/API-Reference#setters]
-  * (Getters)[https://github.com/KeeVeeGames/OKColor.gml/wiki/API-Reference#getters]
-  * (Color Getters)[https://github.com/KeeVeeGames/OKColor.gml/wiki/API-Reference#color-getters]
-  * (Gamut Mapping)[https://github.com/KeeVeeGames/OKColor.gml/wiki/API-Reference#gamut-mapping]
-  * (Mixing)[https://github.com/KeeVeeGames/OKColor.gml/wiki/API-Reference#mixing]
-  * (Cloning)[https://github.com/KeeVeeGames/OKColor.gml/wiki/API-Reference#cloning]
-* (Architecture)[https://github.com/KeeVeeGames/OKColor.gml/wiki/Architecture]
-* (How to contribute)[https://github.com/KeeVeeGames/OKColor.gml/wiki/How-to-contribute]
-
-> [!WARNING]
-> Critical content demanding immediate user attention due to potential risks.
-
-```mermaid
-graph TD;
-    XYZ-->LinearRGB;
-    LinearRGB-->RGB;
-    RGB-->HSV;
-    RGB-->HSL;
-    XYZ-->Lab;
-    Lab-->LCH;
-    XYZ-->LMS;
-    LMS-->OKLab;
-    OKLab-->OKLCH;
-```
+* [API Reference](https://github.com/KeeVeeGames/OKColor.gml/wiki/API-Reference)
+  * [Setters](https://github.com/KeeVeeGames/OKColor.gml/wiki/API-Reference#setters)
+  * [Getters](https://github.com/KeeVeeGames/OKColor.gml/wiki/API-Reference#getters)
+  * [Color Getters](https://github.com/KeeVeeGames/OKColor.gml/wiki/API-Reference#color-getters)
+  * [Gamut Mapping](https://github.com/KeeVeeGames/OKColor.gml/wiki/API-Reference#gamut-mapping)
+  * [Mixing](https://github.com/KeeVeeGames/OKColor.gml/wiki/API-Reference#mixing)
+  * [Cloning](https://github.com/KeeVeeGames/OKColor.gml/wiki/API-Reference#cloning)
+* [Architecture](https://github.com/KeeVeeGames/OKColor.gml/wiki/Architecture)
+* [How to contribute](https://github.com/KeeVeeGames/OKColor.gml/wiki/How-to-contribute)
 
 ## TODO:
 * ### ["Missing" color components](https://www.w3.org/TR/css-color-4/#missing)
