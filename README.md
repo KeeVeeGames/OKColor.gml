@@ -3,9 +3,9 @@
 
 **OKColor** is a color management library for GameMaker written in pure GML that implements the new "industry standard" [OKLab](https://bottosson.github.io/posts/oklab/)/[OKLCH](https://evilmartians.com/chronicles/oklch-in-css-why-quit-rgb-hsl) models, among others.
 
-It's simple to use with only one `OKColor` class and a bunch of methods providing [setting the color](), [models conversion](), [mixing]() and [getting the color for rendering]().
+It's simple to use with only one [`OKColor`](https://github.com/KeeVeeGames/OKColor.gml/wiki/API-Reference) class and a bunch of methods providing [setting the color](https://github.com/KeeVeeGames/OKColor.gml/wiki/API-Reference#setters), [models conversion](https://github.com/KeeVeeGames/OKColor.gml/wiki/API-Reference#getters), [mixing](https://github.com/KeeVeeGames/OKColor.gml/wiki/API-Reference#mixing) and [getting the color for rendering](https://github.com/KeeVeeGames/OKColor.gml/wiki/API-Reference#color-getters).
 
-Navigate to [Installation]() and [How to use]().
+Navigate to [Installation](https://github.com/KeeVeeGames/OKColor.gml/tree/main#installation) and [How to use](https://github.com/KeeVeeGames/OKColor.gml/tree/main#how-to-use).
 
 ## Why to use?
 
@@ -165,25 +165,25 @@ For deep info on extended functionality about setters, getters, mixing, gamut ma
 * **[How to contribute](https://github.com/KeeVeeGames/OKColor.gml/blob/main/CONTRIBUTING.md)**
 
 ## TODO:
-* ### ["Missing" color components](https://www.w3.org/TR/css-color-4/#missing)
+* **["Missing" color components](https://www.w3.org/TR/css-color-4/#missing)**
   * Useful for proper [color mixing](https://www.w3.org/TR/css-color-4/#interpolation-missing).
   * Treat as 0 outside of mixing purposes.
   * Use [NaN (powerless)]() as a missing component?
-* ### [“Powerless” color components](https://www.w3.org/TR/css-color-4/#powerless)
+* **[“Powerless” color components](https://www.w3.org/TR/css-color-4/#powerless)**
   * Basically the color components that are not contributing to the resulting rendered color, like `hue` in HSV, when the `saturation` is 0: no matter what hue angle is, the resulting color will be grey.
   * [Already implemented]() as NaN for `hue` in HSV/HSL implementations, should probably be extended to `lightness` cases and LCH models.
   * Combine with "missing" as the same thing?
-* ### Alpha and premultiplied alpha
+* **Alpha and premultiplied alpha**
   * More sensible color mixing with [alpha interpolation](https://www.w3.org/TR/css-color-4/#interpolation-alpha).
-* ### Linear RGB color mixing
-* ### Hue/Chroma interpolation for color mixing?
+* **Linear RGB color mixing**
+* **Hue/Chroma interpolation for color mixing?**
   * Not sure if it is needed as Lab and OKLab models provide the subjectively best-looking mixing and LCH to my understanding should give the same results as Lab, but may be useful for someone.
-* ### Wider color gamuts like P3 and Rec.2020?
+* **Wider color gamuts like P3 and Rec.2020?**
   * For now, the only supported color space used in [mapping the colors]() for the rendering is sRGB. With the introduction of a wider range [surface formats](https://manual.yoyogames.com/GameMaker_Language/GML_Reference/Drawing/Surfaces/surface_create.htm) in GameMaker it's probably possible now to render colors outside of 0-1 sRGB gamut on HDR monitors and this feature might be useful. Even without that, it still can be useful for passing a wider range colors in surface buffers for the sake of HDR lighting and rendering.
-* ### More white points than D65?
+* **More white points than D65?**
   * D50 white point for XYZ for better consistency?
-* ### HWB color model?
-* ### Shader function equivalents of generating and mixing colors?
+* **HWB color model?**
+* **Shader function equivalents of generating and mixing colors?**
 
 ## Author:
 Nikita Musatov - [MusNik / KeeVee Games](https://twitter.com/keeveegames)
