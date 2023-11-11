@@ -113,9 +113,56 @@ Or get the latest asset package from the [releases page](https://github.com/KeeV
 
 ## How to use
 
+The basic using is pretty simple and straightforward. To create a new color, use the `OKColor` constructor to create a new instance and set the color with a wide choice of [setter methods]().
 
+```js
+var okcolor = new OKColor().setColor(#3f97d8);
+```
+
+Method chaining and optional arguments for setting components separately are also supported so you can do:
+
+```js
+var okcolor = new OKColor().setColor(#3f97d8).setOKLCH(, , 120);
+```
+
+You can convert colors to other model with [getter functions]():
+
+```js
+var rgb = okcolor.getRGB();
+
+show_debug_message($"red: {rgb.r}, green: {rgb.g}, blue: {rgb.blue}");
+```
+
+[Mixing colors]() works like `merge_color` / `lerp`:
+
+```js
+var okcolor1 = new OKColor().setColor(#3f97d8).setOKLCH(, , 120);
+var okcolor2 = new OKColor().setRGB(242,42,133);
+
+var newcolor = okcolor1.mix(okcolor2, 0.5);
+```
+
+To get color for rendering you should use [color getter methods]():
+
+```js
+var okcolor = new OKColor().setColor(#3f97d8).setOKLCH(, , 120);
+
+draw_set_color(okcolor.color());
+```
+
+For deep info on extended functionality about setters, getters, mixing, gamut mapping, and other check out the next section.
 
 ## More info
+
+* (API Reference)[https://github.com/KeeVeeGames/OKColor.gml/wiki/API-Reference]
+  * (Setters)[https://github.com/KeeVeeGames/OKColor.gml/wiki/API-Reference#setters]
+  * (Getters)[https://github.com/KeeVeeGames/OKColor.gml/wiki/API-Reference#getters]
+  * (Color Getters)[https://github.com/KeeVeeGames/OKColor.gml/wiki/API-Reference#color-getters]
+  * (Gamut Mapping)[https://github.com/KeeVeeGames/OKColor.gml/wiki/API-Reference#gamut-mapping]
+  * (Mixing)[https://github.com/KeeVeeGames/OKColor.gml/wiki/API-Reference#mixing]
+  * (Cloning)[https://github.com/KeeVeeGames/OKColor.gml/wiki/API-Reference#cloning]
+* (Architecture)[https://github.com/KeeVeeGames/OKColor.gml/wiki/Architecture]
+* (How to contribute)[https://github.com/KeeVeeGames/OKColor.gml/wiki/How-to-contribute]
 
 > [!WARNING]
 > Critical content demanding immediate user attention due to potential risks.
