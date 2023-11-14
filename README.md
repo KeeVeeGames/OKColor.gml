@@ -97,7 +97,7 @@ Here are some examples of gradients created in RGB, OKLab and Lab:
 ![figure_1_6_red_green_gradient](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/54a412c9-1e93-4e11-8971-3ad252e0a066)&nbsp;
 ![figure_1_7_aqua_gred_gradient](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/5ea8d41f-2c69-41b2-a359-19b1308885ae)
 
-Take a look at how RGB produces ugly dark colors in the middle, whereas perceptual models yield more consistent results. The Lab variant can also provide a bit more saturation.
+Take a look at how RGB produces ugly grayish colors in the middle, whereas perceptual models yield more consistent results. The Lab variant can also provide a bit more saturation.
 
 ![figure_1_8_green_purple_gradient](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/1415165f-31ad-4a00-9c8e-a2a2437dbc72)&nbsp;
 ![figure_1_9_blue_yellow_gradient](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/3df8bbee-5ba0-40c2-a47c-3e952445ccae)
