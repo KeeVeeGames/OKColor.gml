@@ -131,9 +131,9 @@ var okcolor = new OKColor().setColor(#3f97d8).setOKLCH(, , 120);
 You can convert colors to other model with [getter functions](https://github.com/KeeVeeGames/OKColor.gml/wiki/API-Reference#getters):
 
 ```js
-var rgb = okcolor.getRGB();
+var hsv = okcolor.getHSV();
 
-show_debug_message($"red: {rgb.r}, green: {rgb.g}, blue: {rgb.blue}");
+show_debug_message($"hue: {hsv.h}, saturation: {hsv.s}, value: {hsv.v}");
 ```
 
 [Mixing colors](https://github.com/KeeVeeGames/OKColor.gml/wiki/API-Reference#mixing) works like `merge_color` / `lerp`:
