@@ -32,9 +32,8 @@ Notice how there are differences in lightness for different hues in the top one 
 
 Converting both examples to perceptual grayscale shows the lightness flaws more obviously:
 
-![figure_1_3_hsv_gradient_grayscale](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/bfcf4df1-78c0-4dad-b96d-d5e5df6334ed)
+![figure_1_3_hsv_gradient_grayscale](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/72a7efd0-8fb3-4c34-8943-b1c5b55ee62c)
 ![figure_1_2_oklch_gradient_grayscale](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/41f385fc-6c22-43f9-8f25-085d058d5689)
-
 
 ### Generating new colors
 
