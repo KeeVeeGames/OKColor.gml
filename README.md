@@ -22,18 +22,19 @@ OKLab is the starting point of it and is inspired by a perceptual model called C
 
 Here is an example of a gradient generated with HSV model, all colors have the same `saturation` and `value` and showing all the possible `hue`:
 
-![figure_1_1_hsv_gradient](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/a2ce94e9-d6a3-40e7-828f-20de9a7ca4bd)
+![figure_1_1_hsv_gradient](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/923cbbe4-0767-48a3-9886-b9ac327c315c)
 
 And here is another one, generated with the *perceptually uniform* OKLCH model with the same `lightness` and `chroma` and different `hue` giving more consistent color, reflecting how human vision works:
 
-![figure_1_2_oklch_gradient](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/6ee892c5-2a97-46db-ab7c-7e8f2e219b8d)
+![figure_1_2_oklch_gradient](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/16a83072-ba7d-40e0-aac5-cfb4a96d240c)
 
 Notice how there are differences in lightness for different hues in the top one and how the hue itself is distributed unevenly.
 
 Converting both examples to perceptual grayscale shows the lightness flaws more obviously:
 
-![figure_1_3_hsv_gradient_grayscale](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/7c273b8d-2890-4233-bab1-72c0fb377989)
-![figure_1_2_oklch_gradient_grayscale](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/6fd99282-6c9f-4bbb-bde6-bb43e9b1ff77)
+![figure_1_3_hsv_gradient_grayscale](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/bfcf4df1-78c0-4dad-b96d-d5e5df6334ed)
+![figure_1_2_oklch_gradient_grayscale](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/41f385fc-6c22-43f9-8f25-085d058d5689)
+
 
 ### Generating new colors
 
