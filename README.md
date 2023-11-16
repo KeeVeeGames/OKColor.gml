@@ -107,7 +107,7 @@ When dealing with colors that are fairly distant from each other on the hue whee
 ![figure_1_10_blue_white_gradient](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/5291ea92-e3cd-42cc-a55b-fb624eca7bd3)&nbsp;
 ![figure_1_11_black_white_gradient](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/5507afb0-981f-4c26-9ed3-e1d09aba66ab)
 
-Gradients that transition to white exhibit significant hue shifts for some colors, as shown in this example, which is usually unnecessary. In such cases, OKLab should be preferred. The black and white variant also highlights the difference in the linear distribution of OKLab and the non-linearity of RGB and Lab.
+Gradients that transition to white exhibit significant hue shifts for some colors in RGB and Lab models, as shown in this example, which is usually unnecessary. In such cases, OKLab should be preferred. The black and white variant also highlights the difference in the linear distribution of OKLab and the non-linearity of RGB and Lab.
 
 ## Installation
 
