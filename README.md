@@ -153,6 +153,7 @@ var okcolor = new OKColor().setColor(#3f97d8).setOKLCH(, , 120);
 draw_set_color(okcolor.color());
 ```
 
+The library is both [Feather](https://manual.yoyogames.com/Setting_Up_And_Version_Information/IDE_Preferences/Feather_Settings.htm) and [GMEdit](https://github.com/YellowAfterlife/GMEdit/wiki)-friendly, with typing and hints.  
 For deep info on extended functionality about setters, getters, mixing, gamut mapping, and other check out the next section.
 
 ## More info
