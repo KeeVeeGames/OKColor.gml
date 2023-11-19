@@ -142,7 +142,7 @@ show_debug_message($"hue: {hsv.h}, saturation: {hsv.s}, value: {hsv.v}");
 var okcolor1 = new OKColor().setColor(#3f97d8).setOKLCH(, , 120);
 var okcolor2 = new OKColor().setRGB(242,42,133);
 
-var newcolor = okcolor1.mix(okcolor2, 0.5);
+var newcolor = okcolor1.cloneMixed(okcolor2, 0.5);
 ```
 
 To get color for rendering you should use [color getter methods](https://github.com/KeeVeeGames/OKColor.gml/wiki/API-Reference#color-getters):
