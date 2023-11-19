@@ -35,11 +35,11 @@
   },
   "resources": [
     {"id":{"name":"OKColor","path":"scripts/OKColor/OKColor.yy",},},
-    {"id":{"name":"Object1","path":"objects/Object1/Object1.yy",},},
-    {"id":{"name":"Room1","path":"rooms/Room1/Room1.yy",},},
+    {"id":{"name":"obj_test","path":"objects/obj_test/obj_test.yy",},},
+    {"id":{"name":"rm_test","path":"rooms/rm_test/rm_test.yy",},},
   ],
   "RoomOrderNodes": [
-    {"roomId":{"name":"Room1","path":"rooms/Room1/Room1.yy",},},
+    {"roomId":{"name":"rm_test","path":"rooms/rm_test/rm_test.yy",},},
   ],
   "templateType": "game",
   "TextureGroups": [
