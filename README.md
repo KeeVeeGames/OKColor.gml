@@ -1,7 +1,7 @@
 # OKColor.gml [![Donate](https://img.shields.io/badge/donate-%E2%9D%A4-blue.svg)](https://musnik.itch.io/donate-me) [![License](https://img.shields.io/github/license/KeeVeeGames/OKColor.gml)](#!)
 <img align="left" src="https://keevee.games/wp-content/uploads/2023/11/logo-300x300.png" alt="Logo" width="150">
 
-**OKColor** is a color management library for GameMaker written in pure GML that implements the new "industry standard" [OKLab](https://bottosson.github.io/posts/oklab/)/[OKLCH](https://evilmartians.com/chronicles/oklch-in-css-why-quit-rgb-hsl) models, among others.
+**OKColor** is a color management library for GameMaker written in pure GML that implements the new "industry standard" [OKLab](https://bottosson.github.io/posts/oklab/)/[OKLCH](https://evilmartians.com/chronicles/oklch-in-css-why-quit-rgb-hsl) perceptual models, among others.
 
 It's simple to use with only one [`OKColor`](https://github.com/KeeVeeGames/OKColor.gml/wiki/API-Reference) class and a bunch of methods providing [setting the color](https://github.com/KeeVeeGames/OKColor.gml/wiki/API-Reference#setters), [models conversion](https://github.com/KeeVeeGames/OKColor.gml/wiki/API-Reference#getters), [mixing](https://github.com/KeeVeeGames/OKColor.gml/wiki/API-Reference#mixing) and [getting the color for rendering](https://github.com/KeeVeeGames/OKColor.gml/wiki/API-Reference#color-getters).
 
