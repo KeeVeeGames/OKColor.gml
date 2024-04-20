@@ -37,7 +37,7 @@ Converting both examples to perceptual grayscale shows the lightness flaws more 
 
 ### Generating new colors
 
-Usually, the choice of specific colors in the game is made manually by the game artists or art directors. However, there are some cases where colors need to be generated dynamically. This could be due to the specifics of a particular visual effect, a large number of assets requiring recolor or user-inputted customization. So, if you're generating color palettes for your game in-code and need consistent and predictable outcomes you should consider using this library with the perceptual color model (preferably OKLCH) instead of standard `make_color_rgb` and `make_color_hsv`.
+Usually, the choice of specific colors in the game is made manually by the game artists or art directors. However, there are some cases where colors need to be generated dynamically. This could be due to the specifics of a particular visual effect, a large number of assets requiring recolor or user-inputted customization. So, if you're generating color palettes for your game in-code and need consistent and predictable outcomes you should consider using this library with OKLCH color model instead of standard `make_color_rgb` and `make_color_hsv`.
 
 > [!NOTE]
 > You can use this OKLCH color picker to choose reference colors: [oklch.com](https://oklch.com/). Uncheck **"Show P3"** colors too see only sRGB colors that GameMaker rendering supports.
