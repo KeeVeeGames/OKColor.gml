@@ -1377,7 +1377,7 @@ function OKColor() constructor {
     /// @returns {Struct.OKColor} New OKColor instance.
     /// @description With this method you can get a new copy of OKColor struct with the same color.
     static clone = function()/*->OKColor*/ {
-        /// @hint OKColor:clone(mixColor:OKColor, amount:number, ?colorMixing:int<OKColorMixing>?, ?gamutMapping:int<OKColorMapping>?)->OKColor Get a new copy of OKColor struct with the same color.
+        /// @hint OKColor:clone()->OKColor Get a new copy of OKColor struct with the same color.
         return variable_clone(self);
     }
     
