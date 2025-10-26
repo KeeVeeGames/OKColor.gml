@@ -188,7 +188,7 @@ function OKColor() constructor {
     }
     
     /// @ignore
-    static _setXYZfromLab = function(lab/*:LabStruct*/) {
+    static _setXYZfromLab = function(lab/*:LabStruct*/)/*->void*/ {
         var epsilon = 24/116;
         var k = 24389/27;
         
@@ -406,7 +406,7 @@ function OKColor() constructor {
             exit;
         }
         
-        _mapGamutReduceComponent(cacheLCH.c, function(chroma/*:number*/) { setLCH(, chroma); });
+        _mapGamutReduceComponent(cacheLCH.c, function(chroma/*:number*/)/*->void*/ { setLCH(, chroma); });
     }
     
     /// @ignore
@@ -432,7 +432,7 @@ function OKColor() constructor {
             exit;
         }
         
-        _mapGamutReduceComponent(cacheOKLCH.c, function(chroma/*:number*/) { setOKLCH(, chroma); });
+        _mapGamutReduceComponent(cacheOKLCH.c, function(chroma/*:number*/)/*->void*/ { setOKLCH(, chroma); });
     }
     
     #endregion
@@ -1427,7 +1427,7 @@ function OKColor() constructor {
     static cloneMixed = function(mixColor/*:OKColor*/, amount/*:number*/, colorMixing/*:int<OKColorMixing>*/ = _colorMixingDefault, gamutMapping/*:int<OKColorMapping>*/ = _gamutMappingDefault)/*->OKColor*/ {
         /// @hint OKColor:cloneMixed(mixColor:OKColor, amount:number, ?colorMixing:int<OKColorMixing>?, ?gamutMapping:int<OKColorMapping>?)->OKColor Get a new copy of OKColor struct with the additional color mixed.
         
-        var newColor = variable_clone(self) /*#as OKColor*/;
+        var newColor = variable_clone(self);
         
         // pre-mapping gives generally better results than after-mapping, with no "flat" colors
         newColor._updateMapped(gamutMapping);
