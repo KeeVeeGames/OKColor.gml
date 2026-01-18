@@ -1,4 +1,4 @@
-#macro OKCOLOR_WARNINGS 1
+#macro _OKCOLOR_WARNINGS 1
 
 // Feather ignore GM2017
 // Feather ignore GM2043
@@ -700,15 +700,14 @@ function OKColor() constructor {
     
     #region Setters
     
-    /// @function setXYZ([x], [y], [z])
-    /// @self OKColor
+    /// @description With this method, you can set a color in CIE XYZ format that is mostly used for technical needs. Arguments are optional so you can set components separately.
     /// @param {Real} [x] The X component definition of CIE XYZ color.
     /// @param {Real} [y] The Y component definition of CIE XYZ color.
     /// @param {Real} [z] The Z component definition of CIE XYZ color.
     /// @return {Struct.OKColor} The same OKColor instance that the method was called on, for method chaining.
-    /// @description With this method, you can set a color in CIE XYZ format that is mostly used for technical needs. Arguments are optional so you can set components separately.
+    /// @self OKColor
     static setXYZ = function(x/*:number?*/ = undefined, y/*:number?*/ = undefined, z/*:number?*/ = undefined)/*->OKColor*/ {
-        /// @hint OKColor:setXYZ(?x:number?, ?y:number?, ?z:number?)->OKColor Returns the same OKColor instance that the method was called on, for method chaining.
+        /// @hint OKColor:setXYZ(?x:number?, ?y:number?, ?z:number?)->OKColor Set a color in CIE XYZ format that is mostly used for technical needs. Arguments are optional so you can set components separately. Returns the same OKColor instance for method chaining.
         
         _x = x ?? _x;
         _y = y ?? _y;
@@ -719,13 +718,12 @@ function OKColor() constructor {
         return self;
     }
     
-    /// @function setColor(color)
-    /// @self OKColor
+    /// @description With this method, you can set a color in GameMaker format.
     /// @param {Constant.Color} color The color definition in GameMaker supported format, can be c_color constant, #rrggbb, $bbggrr or a decimal number.
     /// @return {Struct.OKColor} The same OKColor instance that the method was called on, for method chaining.
-    /// @description With this method, you can set a color in GameMaker format.
+    /// @self OKColor
     static setColor = function(_color/*:int<color>*/)/*->OKColor*/ {
-        /// @hint OKColor:setColor(color:int<color>)->OKColor Argument can be c_color constant, #rrggbb, $bbggrr or a decimal number. Returns the same OKColor instance that the method was called on, for method chaining.
+        /// @hint OKColor:setColor(color:int<color>)->OKColor Set a color in GameMaker format. Argument can be c_color constant, #rrggbb, $bbggrr or a decimal number. Returns the same OKColor instance for method chaining.
         
         var cacheRGB = _cache[_OKColorModel.RGB];
         cacheRGB.r = color_get_red(_color);
@@ -749,13 +747,12 @@ function OKColor() constructor {
         return self;
     }
     
-    /// @function setHex(hex)
-    /// @self OKColor
+    /// @description With this method, you can set a color for OKColor struct in a string format.
     /// @param {String} hex The color definition in hex format as a string "#rrggbb".
     /// @return {Struct.OKColor} The same OKColor instance that the method was called on, for method chaining.
-    /// @description Description
+    /// @self OKColor
     static setHex = function(hex/*:string*/)/*->OKColor*/ {
-        /// @hint OKColor:setHex(hex:string)->OKColor Argument in hex format as a string "#rrggbb". Returns the same OKColor instance that the method was called on, for method chaining.
+        /// @hint OKColor:setHex(hex:string)->OKColor Set a color for OKColor struct in a string format. Argument in hex format as a string "#rrggbb". Returns the same OKColor instance for method chaining.
         
         var dec = 0;
  
@@ -770,15 +767,14 @@ function OKColor() constructor {
         return setColor(gmcolor);
     }
     
-    /// @function setRGB([red], [green], [blue])
-    /// @self OKColor
+    /// @description With this method, you can set a color in RGB format. Arguments are optional so you can set components separately.
     /// @param {Real} [red] The red component definition of RGB color (in 0-255 range).
     /// @param {Real} [green] The green component definition of RGB color (in 0-255 range).
     /// @param {Real} [blue] The blue component definition of RGB color (in 0-255 range).
     /// @return {Struct.OKColor} The same OKColor instance that the method was called on, for method chaining.
-    /// @description With this method, you can set a color in RGB format. Arguments are optional so you can set components separately.
+    /// @self OKColor
     static setRGB = function(red/*:number?*/ = undefined, green/*:number?*/ = undefined, blue/*:number?*/ = undefined)/*->OKColor*/ {
-        /// @hint OKColor:setRGB(?red:number?, ?green:number?, ?blue:number?)->OKColor Components are in 0-255 range. Returns the same OKColor instance that the method was called on, for method chaining.
+        /// @hint OKColor:setRGB(?red:number?, ?green:number?, ?blue:number?)->OKColor Set a color in RGB format. Arguments are optional so you can set components separately. Components are in 0-255 range. Returns the same OKColor instance for method chaining.
         
         // update values in case of setting parameters partially
         if (red == undefined || green == undefined || blue == undefined) {
@@ -807,15 +803,14 @@ function OKColor() constructor {
         return self;
     }
     
-    /// @function setLinearRGB([red], [green], [blue])
-    /// @self OKColor
+    /// @description With this method, you can set a color in non-gamma corrected Linear RGB format. Arguments are optional so you can set components separately.
     /// @param {Real} [red] The red component definition of Linear RGB color (in 0-1 range).
     /// @param {Real} [green] The green component definition of Linear RGB color (in 0-1 range).
     /// @param {Real} [blue] The blue component definition of Linear RGB color (in 0-1 range).
     /// @return {Struct.OKColor} The same OKColor instance that the method was called on, for method chaining.
-    /// @description With this method, you can set a color in non-gamma corrected Linear RGB format. Arguments are optional so you can set components separately.
+    /// @self OKColor
     static setLinearRGB = function(red/*:number?*/ = undefined, green/*:number?*/ = undefined, blue/*:number?*/ = undefined)/*->OKColor*/ {
-        /// @hint OKColor:setLinearRGB(?red:number?, ?green:number?, ?blue:number?)->OKColor Components are in 0-1 range. Returns the same OKColor instance that the method was called on, for method chaining.
+        /// @hint OKColor:setLinearRGB(?red:number?, ?green:number?, ?blue:number?)->OKColor Set a color in non-gamma corrected Linear RGB format. Arguments are optional so you can set components separately. Components are in 0-1 range. Returns the same OKColor for method chaining.
         
         // update values in case of setting parameters partially
         if (red == undefined || green == undefined || blue == undefined) {
@@ -838,15 +833,14 @@ function OKColor() constructor {
         return self;
     }
     
-    /// @function setHSV([hue], [saturation], [value])
-    /// @self OKColor
+    /// @description With this method, you can set a color in HSV format. Arguments are optional so you can set components separately.
     /// @param {Real} [hue] The hue component definition of HSV color (in 0-360 range).
     /// @param {Real} [saturation] The saturation component definition of HSV color (in 0-1 range).
     /// @param {Real} [value] The value component definition of HSV color (in 0-1 range).
     /// @return {Struct.OKColor} The same OKColor instance that the method was called on, for method chaining.
-    /// @description With this method, you can set a color in HSV format. Arguments are optional so you can set components separately.
+    /// @self OKColor
     static setHSV = function(hue/*:number?*/ = undefined, saturation/*:number?*/ = undefined, value/*:number?*/ = undefined)/*->OKColor*/ {
-        /// @hint OKColor:setHSV(?hue:number?, ?saturation:number?, ?value:number?)->OKColor Hue in a 0-360 range, saturation and value is in 0-1. Returns the same OKColor instance that the method was called on, for method chaining.
+        /// @hint OKColor:setHSV(?hue:number?, ?saturation:number?, ?value:number?)->OKColor Set a color in HSV format. Arguments are optional so you can set components separately. Hue in a 0-360 range, saturation and value is in 0-1. Returns the same OKColor instance for method chaining.
         
         // update values in case of setting parameters partially
         if (hue == undefined || saturation == undefined || value == undefined) {
@@ -891,15 +885,14 @@ function OKColor() constructor {
         return self;
     }
     
-    /// @function setHSL([hue], [saturation], [lightness])
-    /// @self OKColor
+    /// @description With this method, you can set a color in HSL format. Arguments are optional so you can set components separately.
     /// @param {Real} [hue] The hue component definition of HSL color (in 0-360 range).
     /// @param {Real} [saturation] The saturation component definition of HSL color (in 0-1 range).
     /// @param {Real} [lightness]The lightness component definition of HSL color (in 0-1 range).
     /// @return {Struct.OKColor} The same OKColor instance that the method was called on, for method chaining.
-    /// @description With this method, you can set a color in HSL format. Arguments are optional so you can set components separately.
+    /// @self OKColor
     static setHSL = function(hue/*:number?*/ = undefined, saturation/*:number?*/ = undefined, lightness/*:number?*/ = undefined)/*->OKColor*/ {
-        /// @hint OKColor:setHSL(?hue:number?, ?saturation:number?, ?lightness:number?)->OKColor Hue in a 0-360 range, saturation and lightness is in 0-1. Returns the same OKColor instance that the method was called on, for method chaining.
+        /// @hint OKColor:setHSL(?hue:number?, ?saturation:number?, ?lightness:number?)->OKColor Set a color in HSL format. Arguments are optional so you can set components separately. Hue in a 0-360 range, saturation and lightness is in 0-1. Returns the same OKColor instance for method chaining.
         
         // update values in case of setting parameters partially
         if (hue == undefined || saturation == undefined || lightness == undefined) {
@@ -944,15 +937,14 @@ function OKColor() constructor {
         return self;
     }
     
-    /// @function setLMS([long], [medium], [short])
-    /// @self OKColor
+    /// @description With this method, you can set a color in LMS format that is mostly used for technical needs. Arguments are optional so you can set components separately.
     /// @param {Real} [long] The long wavelength definition of LMS color.
     /// @param {Real} [medium] The medium wavelength definition of LMS color.
     /// @param {Real} [short] The short wavelength definition of LMS color.
     /// @return {Struct.OKColor} The same OKColor instance that the method was called on, for method chaining.
-    /// @description With this method, you can set a color in LMS format that is mostly used for technical needs. Arguments are optional so you can set components separately.
+    /// @self OKColor
     static setLMS = function(long/*:number?*/ = undefined, medium/*:number?*/ = undefined, short/*:number?*/ = undefined)/*->OKColor*/ {
-        /// @hint OKColor:setLMS(?long:number?, ?medium:number?, ?short:number?)->OKColor Returns the same OKColor instance that the method was called on, for method chaining.
+        /// @hint OKColor:setLMS(?long:number?, ?medium:number?, ?short:number?)->OKColor Set a color in LMS format that is mostly used for technical needs. Arguments are optional so you can set components separately. Returns the same OKColor instance that the method was called on, for method chaining.
         
         if (long == undefined || medium == undefined || short == undefined) {
             _updateLMS();
@@ -974,15 +966,14 @@ function OKColor() constructor {
         return self;
     }
     
-    /// @function setLab([lightness], [a], [b])
-    /// @self OKColor
+    /// @description With this method, you can set a color in CIELab format. Arguments are optional so you can set components separately.
     /// @param {Real} [lightness] The lightness component definition of CIELab color (in 0-100 range).
     /// @param {Real} [a] The a component definition of CIELab color (in -125 to 125 range).
     /// @param {Real} [b] The b component definition of CIELab color (in -125 to 125 range).
     /// @return {Struct.OKColor} The same OKColor instance that the method was called on, for method chaining.
-    /// @description With this method, you can set a color in CIELab format. Arguments are optional so you can set components separately.
+    /// @self OKColor
     static setLab = function(lightness/*:number?*/ = undefined, a/*:number?*/ = undefined, b/*:number?*/ = undefined)/*->OKColor*/ {
-        /// @hint OKColor:setLab(?lightness:number?, ?a:number?, ?b:number?)->OKColor Lightness is in 0-100 range, a and b is in -125 to 125. Returns the same OKColor instance that the method was called on, for method chaining.
+        /// @hint OKColor:setLab(?lightness:number?, ?a:number?, ?b:number?)->OKColor Set a color in CIELab format. Arguments are optional so you can set components separately. Lightness is in 0-100 range, a and b is in -125 to 125. Returns the same OKColor instance for method chaining.
         
         // update values in case of setting parameters partially
         if (lightness == undefined || a == undefined || b == undefined) {
@@ -1002,15 +993,14 @@ function OKColor() constructor {
         return self;
     }
     
-    /// @function setLCH([lightness], [chroma], [hue])
-    /// @self OKColor
+    /// @description With this method, you can set a color in CIELCH format. Arguments are optional so you can set components separately.
     /// @param {Real} [lightness] The lightness component definition of CIELCH color (in 0-100 range).
     /// @param {Real} [chroma] The chroma component definition of CIELCH color (in 0-150 range).
     /// @param {Real} [hue] The hue component definition of CIELCH color (in 0-360 range).
     /// @return {Struct.OKColor} The same OKColor instance that the method was called on, for method chaining.
-    /// @description With this method, you can set a color in CIELCH format. Arguments are optional so you can set components separately.
+    /// @self OKColor
     static setLCH = function(lightness/*:number?*/ = undefined, chroma/*:number?*/ = undefined, hue/*:number?*/ = undefined)/*->OKColor*/ {
-        /// @hint OKColor:setLCH(?lightness:number?, ?chroma:number?, ?hue:number?)->OKColor Lightness is in 0-100 range, chroma is in 0-150, hue is in 0-360. Returns the same OKColor instance that the method was called on, for method chaining.
+        /// @hint OKColor:setLCH(?lightness:number?, ?chroma:number?, ?hue:number?)->OKColor Set a color in CIELCH format. Arguments are optional so you can set components separately. Lightness is in 0-100 range, chroma is in 0-150, hue is in 0-360. Returns the same OKColor instance for method chaining.
         
         // update values in case of setting parameters partially
         if (lightness == undefined || chroma == undefined || hue == undefined) {
@@ -1042,15 +1032,14 @@ function OKColor() constructor {
         return self;
     }
     
-    /// @function setOKLab([lightness], [a], [b])
-    /// @self OKColor
+    /// @description With this method, you can set a color in OKLab format. Arguments are optional so you can set components separately.
     /// @param {Real} [lightness] The lightness component definition of OKLab color (in 0-1 range).
     /// @param {Real} [a] The a component definition of OKLab color (in -0.4 to 0.4 range).
     /// @param {Real} [b] The b component definition of OKLab color (in -0.4 to 0.4 range).
     /// @return {Struct.OKColor} The same OKColor instance that the method was called on, for method chaining.
-    /// @description With this method, you can set a color in OKLab format. Arguments are optional so you can set components separately.
+    /// @self OKColor
     static setOKLab = function(lightness/*:number?*/ = undefined, a/*:number?*/ = undefined, b/*:number?*/ = undefined)/*->OKColor*/ {
-        /// @hint OKColor:setOKLab(?lightness:number?, ?a:number?, ?b:number?)->OKColor Lightness is in 0-1 range, a and b is in -0.4 to 0.4. Returns the same OKColor instance that the method was called on, for method chaining.
+        /// @hint OKColor:setOKLab(?lightness:number?, ?a:number?, ?b:number?)->OKColor Set a color in OKLab format. Arguments are optional so you can set components separately. Lightness is in 0-1 range, a and b is in -0.4 to 0.4. Returns the same OKColor instance for method chaining.
         
         // update values in case of setting parameters partially
         if (lightness == undefined || a == undefined || b == undefined) {
@@ -1080,15 +1069,14 @@ function OKColor() constructor {
         return self;
     }
     
-    /// @function setOKLCH([lightness], [chroma], [hue])
-    /// @self OKColor
+    /// @description With this method, you can set a color in OKLCH format. Arguments are optional so you can set components separately.
     /// @param {Real} [lightness] The lightness component definition of OKLCH color (in 0-1 range).
     /// @param {Real} [chroma] The chroma component definition of OKLCH color (in 0 to 0.4 range).
     /// @param {Real} [hue] The hue component definition of OKLCH color (in 0-360 range).
     /// @return {Struct.OKColor} The same OKColor instance that the method was called on, for method chaining.
-    /// @description With this method, you can set a color in OKLCH format. Arguments are optional so you can set components separately.
+    /// @self OKColor
     static setOKLCH = function(lightness/*:number?*/ = undefined, chroma/*:number?*/ = undefined, hue/*:number?*/ = undefined)/*->OKColor*/ {
-        /// @hint OKColor:setOKLCH(?lightness:number?, ?chroma:number?, ?hue:number?)->OKColor Lightness is in 0-1 range, chroma is in 0 to 0.4, hue is in 0-360. Returns the same OKColor instance that the method was called on, for method chaining.
+        /// @hint OKColor:setOKLCH(?lightness:number?, ?chroma:number?, ?hue:number?)->OKColor Set a color in OKLCH format. Arguments are optional so you can set components separately. Lightness is in 0-1 range, chroma is in 0 to 0.4, hue is in 0-360. Returns the same OKColor instance for method chaining.
         
         // update values in case of setting parameters partially
         if (lightness == undefined || chroma == undefined || hue == undefined) {
@@ -1134,68 +1122,68 @@ function OKColor() constructor {
     
     #region Getters
     
-    /// @function getXYZ()
-    /// @self OKColor
-    /// @pure
     /// @description With this method, you can get a color in raw CIE XYZ format that is mostly used for technical needs.
+    /// @return {Struct.x:Real;y:Real;z:Real} Struct with x, y, and z components.
+    /// @pure
+    /// @self OKColor
     static getXYZ = function()/*->XYZStruct*/ {
         /// @hint OKColor:getXYZ()->XYZStruct Get a color in raw CIE XYZ format that is mostly used for technical needs.
         
         return { x : _x, y : _y, z : _z };
     }
     
-    /// @function getRGB()
-    /// @self OKColor
+    /// @description With this method, you can get a color in raw RGB format. Utility function, for rendering use colorRGB() instead.
+    /// @return {Struct.r:Real;g:Real;b:Real} Struct with r, g and b components. Components are in 0-255 range.
     /// @pure
-    /// @description With this method, you can get a color in raw RGB format.
+    /// @self OKColor
     static getRGB = function()/*->RGBStruct*/ {
-        /// @hint OKColor:getRGB()->RGBStruct Get a color in raw RGB format.
+        /// @hint OKColor:getRGB()->RGBStruct Get a color in raw RGB format. Utility function, for rendering use colorRGB() instead. Components are in 0-255 range.
         
         _updateRGB();
         var cacheRGB = _cache[_OKColorModel.RGB];
         return { r : cacheRGB.r, g : cacheRGB.g, b : cacheRGB.b };
     }
     
-    /// @function getLinearRGB()
+    /// @description With this method, you can get a color in raw non-gamma corrected Linear RGB format.
+    /// @return {Struct.r:Real;g:Real;b:Real} Struct with r, g and b components. Components are in 0-1 range.
     /// @self OKColor
     /// @pure
-    /// @description With this method, you can get a color in raw non-gamma corrected Linear RGB format.
     static getLinearRGB = function()/*->RGBStruct*/ {
-        /// @hint OKColor:getLinearRGB()->RGBStruct Get a color in raw non-gamma corrected Linear RGB format.
+        /// @hint OKColor:getLinearRGB()->RGBStruct Get a color in raw non-gamma corrected Linear RGB format. Components are in 0-1 range.
         
         _updateLinearRGB();
         var cacheLinearRGB = _cache[_OKColorModel.LinearRGB];
         return { r : cacheLinearRGB.r, g : cacheLinearRGB.g, b : cacheLinearRGB.b };
     }
     
-    /// @function getHSV()
+    /// @description With this method, you can get a color in raw HSV format. Warning: hue in the resulting struct can be NaN, can be safely treated as 0 in outside use.
+    /// @return {Struct.h:Real;s:Real;v:Real} Struct with h, s and v components. Hue in a 0-360 range, saturation and value is in 0-1.
     /// @self OKColor
     /// @pure
-    /// @description With this method, you can get a color in raw HSV format. Warning: hue in the resulting struct can be NaN, can be safely treated as 0 in outside use.
     static getHSV = function()/*->HSVStruct*/ {
-        /// @hint OKColor:getHSV()->HSVStruct Get a color in raw HSV format. Warning: hue in the resulting struct can be NaN, can be safely treated as 0 in outside use.
+        /// @hint OKColor:getHSV()->HSVStruct Get a color in raw HSV format. Utility function, for rendering use colorHSV() instead. Warning: hue in the resulting struct can be NaN, can be safely treated as 0 in outside use. Hue in a 0-360 range, saturation and value is in 0-1.
         
         _updateHSV();
         var cacheHSV = _cache[_OKColorModel.HSV];
         return { h : cacheHSV.h, s : cacheHSV.s, v : cacheHSV.v };
     }
     
-    /// @function getHSL()
+    /// @description With this method, you can get a color in raw HSL format. Warning: hue in the resulting struct can be NaN, can be safely treated as 0 in outside use.
+    /// @return {Struct.h:Real;s:Real;l:Real} Struct with h, s and l components. Hue in a 0-360 range, saturation and lightness is in 0-1.
     /// @self OKColor
     /// @pure
-    /// @description With this method, you can get a color in raw HSL format. Warning: hue in the resulting struct can be NaN, can be safely treated as 0 in outside use.
     static getHSL = function()/*->HSLStruct*/ {
-        /// @hint OKColor:getHSL()->HSLStruct Get a color in raw HSL format. Warning: hue in the resulting struct can be NaN, can be safely treated as 0 in outside use.
+        /// @hint OKColor:getHSL()->HSLStruct Get a color in raw HSL format. Utility function, for rendering use colorHSL() instead. Warning: hue in the resulting struct can be NaN, can be safely treated as 0 in outside use. Hue in a 0-360 range, saturation and lightness is in 0-1.
         
         _updateHSL();
         var cacheHSL = _cache[_OKColorModel.HSL];
         return { h : cacheHSL.h, s : cacheHSL.s, l : cacheHSL.l };
     }
     
-    /// @function getLMS()
+    /// @description With this method, you can get a color in raw LMS format that is mostly used for technical needs.
+    /// @return {Struct.l:Real;m:Real;s:Real} Struct with l, m and s components.
     /// @self OKColor
     /// @pure
-    /// @description With this method, you can get a color in raw LMS format that is mostly used for technical needs.
     static getLMS = function()/*->LMSStruct*/ {
         /// @hint OKColor:getLMS()->LMSStruct Get a color in raw LMS format that is mostly used for technical needs.
         
@@ -1204,48 +1192,48 @@ function OKColor() constructor {
         return { l : cacheLMS.l, m : cacheLMS.m, s : cacheLMS.s };
     }
     
-    /// @function getLab()
+    /// @description With this method, you can get a color in raw CIELab format.
+    /// @return {Struct.l:Real;a:Real;b:Real} Struct with l, a and b components. Lightness is in 0-100 range, a and b is in -125 to 125.
     /// @self OKColor
     /// @pure
-    /// @description With this method, you can get a color in raw CIELab format.
     static getLab = function()/*->LabStruct*/ {
-        /// @hint OKColor:getLab()->LabStruct Get a color in raw CIELab format.
+        /// @hint OKColor:getLab()->LabStruct Get a color in raw CIELab format. Lightness is in 0-100 range, a and b is in -125 to 125.
         
         _updateLab();
         var cacheLab = _cache[_OKColorModel.Lab];
         return { l : cacheLab.l, a : cacheLab.a, b : cacheLab.b };
     }
     
-    /// @function getLCH()
+    /// @description With this method, you can get a color in raw CIELCH format.
+    /// @return {Struct.l:Real;c:Real;h:Real} Struct with l, c and h components. Lightness is in 0-100 range, chroma is in 0-150, hue is in 0-360.
     /// @self OKColor
     /// @pure
-    /// @description With this method, you can get a color in raw CIELCH format.
     static getLCH = function()/*->LCHStruct*/ {
-        /// @hint OKColor:getLCH()->LCHStruct Get a color in raw CIELCH format.
+        /// @hint OKColor:getLCH()->LCHStruct Get a color in raw CIELCH format. Lightness is in 0-100 range, chroma is in 0-150, hue is in 0-360.
         
         _updateLCH();
         var cacheLCH = _cache[_OKColorModel.LCH];
         return { l : cacheLCH.l, c : cacheLCH.c, h : cacheLCH.h };
     }
     
-    /// @function getOKLab()
+    /// @description With this method, you can get a color in raw OKLab format.
+    /// @return {Struct.l:Real;a:Real;b:Real} Struct with l, a and b components. Lightness is in 0-1 range, a and b is in -0.4 to 0.4.
     /// @self OKColor
     /// @pure
-    /// @description With this method, you can get a color in raw OKLab format.
     static getOKLab = function()/*->LabStruct*/ {
-        /// @hint OKColor:getOKLab()->LabStruct Get a color in raw OKLab format.
+        /// @hint OKColor:getOKLab()->LabStruct Get a color in raw OKLab format. Lightness is in 0-1 range, a and b is in -0.4 to 0.4.
         
         _updateOKLab();
         var cacheOKLab = _cache[_OKColorModel.OKLab];
         return { l : cacheOKLab.l, a : cacheOKLab.a, b : cacheOKLab.b };
     }
     
-    /// @function getOKLCH()
+    /// @description With this method, you can get a color in raw OKLCH format.
+    /// @return {Struct.l:Real;c:Real;h:Real} Struct with l, c and h components. Lightness is in 0-1 range, chroma is in 0 to 0.4, hue is in 0-360.
     /// @self OKColor
     /// @pure
-    /// @description With this method, you can get a color in raw OKLCH format.
     static getOKLCH = function()/*->LCHStruct*/ {
-        /// @hint OKColor:getOKLCH()->LCHStruct Get a color in raw OKLCH format.
+        /// @hint OKColor:getOKLCH()->LCHStruct Get a color in raw OKLCH format. Lightness is in 0-1 range, chroma is in 0 to 0.4, hue is in 0-360.
         
         _updateOKLCH();
         var cacheOKLCH = _cache[_OKColorModel.OKLCH];
@@ -1256,11 +1244,11 @@ function OKColor() constructor {
     
     #region Color Getters
     
-    /// @function color([gamutMapping])
-    /// @self OKColor
-    /// @pure
-    /// @param {Enum.OKColorMapping} [gamutMapping] Gamut mapping type, default is OKLCH chroma reduction.
     /// @description With this method you can get a color value valid for rendering in GameMaker format usable for any system function like draw_set_color.
+    /// @param {Enum.OKColorMapping} [gamutMapping] Gamut mapping type, default is OKLCH chroma reduction.
+    /// @return {Constant.Color}
+    /// @pure
+    /// @self OKColor
     static color = function(gamutMapping/*:int<OKColorMapping>*/ = _gamutMappingDefault)/*->int<color>*/ {
         /// @hint OKColor:color(?gamutMapping:int<OKColorMapping>)->int<color> Get a color value valid for rendering in GameMaker format usable for any system function like draw_set_color.
     
@@ -1270,11 +1258,11 @@ function OKColor() constructor {
         return make_color_rgb(mappedRGB.r, mappedRGB.g, mappedRGB.b);
     }
     
-    /// @function colorHex([gamutMapping])
-    /// @self OKColor
-    /// @pure
-    /// @param {Enum.OKColorMapping} [gamutMapping] Gamut mapping type, default is OKLCH chroma reduction
     /// @description With this method you can get a color value valid for rendering in hex format as a string "#rrggbb".
+    /// @param {Enum.OKColorMapping} [gamutMapping] Gamut mapping type, default is OKLCH chroma reduction
+    /// @return {String}
+    /// @pure
+    /// @self OKColor
     static colorHex = function(gamutMapping/*:int<OKColorMapping>*/ = _gamutMappingDefault)/*->string*/ {
         /// @hint OKColor:colorHex(?gamutMapping:int<OKColorMapping>)->string Get a color value valid for rendering in hex format as a string "#rrggbb".
         
@@ -1295,13 +1283,13 @@ function OKColor() constructor {
         return "#" + hex;
     }
     
-    /// @function colorRGB([gamutMapping])
-    /// @self OKColor
-    /// @pure
-    /// @param {Enum.OKColorMapping} [gamutMapping] Gamut mapping type, default is OKLCH chroma reduction.
     /// @description With this method you can get color values valid for rendering in RGB format.
+    /// @param {Enum.OKColorMapping} [gamutMapping] Gamut mapping type, default is OKLCH chroma reduction.
+    /// @return {Struct.r:Real;g:Real;b:Real} Struct with r, g and b components. Components are in 0-255 range.
+    /// @pure
+    /// @self OKColor
     static colorRGB = function(gamutMapping/*:int<OKColorMapping>*/ = _gamutMappingDefault)/*->RGBStruct*/ {
-        /// @hint OKColor:colorRGB(?gamutMapping:int<OKColorMapping>)->RGBStruct Get color values valid for rendering in RGB format.
+        /// @hint OKColor:colorRGB(?gamutMapping:int<OKColorMapping>)->RGBStruct Get color values valid for rendering in RGB format. Components are in 0-255 range.
         
         _updateMapped(gamutMapping);
         var mappedRGB = (_gamutMappedColorCache /*#as OKColor*/).getRGB();
@@ -1313,13 +1301,13 @@ function OKColor() constructor {
         }
     }
     
-    /// @function colorHSV([gamutMapping])
-    /// @self OKColor
-    /// @pure
-    /// @param {Enum.OKColorMapping} [gamutMapping] Gamut mapping type, default is OKLCH chroma reduction.
     /// @description With this method you can get color values valid for rendering in HSV format.
+    /// @param {Enum.OKColorMapping} [gamutMapping] Gamut mapping type, default is OKLCH chroma reduction.
+    /// @return {Struct.h:Real;s:Real;v:Real} Struct with h, s and v components. Hue in a 0-360 range, saturation and value is in 0-1.
+    /// @pure
+    /// @self OKColor
     static colorHSV = function(gamutMapping/*:int<OKColorMapping>*/ = _gamutMappingDefault)/*->HSVStruct*/ {
-        /// @hint OKColor:colorHSV(?gamutMapping:int<OKColorMapping>)->HSVStruct Get color values valid for rendering in HSV format.
+        /// @hint OKColor:colorHSV(?gamutMapping:int<OKColorMapping>)->HSVStruct Get color values valid for rendering in HSV format. Hue in a 0-360 range, saturation and value is in 0-1.
         
         _updateMapped(gamutMapping);
         var mappedHSV = (_gamutMappedColorCache /*#as OKColor*/).getHSV();
@@ -1331,13 +1319,13 @@ function OKColor() constructor {
         }
     }
     
-    /// @function colorGMHSV([gamutMapping])
-    /// @self OKColor
-    /// @pure
-    /// @param {Enum.OKColorMapping} [gamutMapping] Gamut mapping type, default is OKLCH chroma reduction.
     /// @description With this method you can get color values valid for rendering in GameMaker HSV format with 0-255 range.
+    /// @param {Enum.OKColorMapping} [gamutMapping] Gamut mapping type, default is OKLCH chroma reduction.
+    /// @return {Struct.h:Real;s:Real;v:Real} Struct with h, s and v components. Components are in 0-255 range.
+    /// @pure
+    /// @self OKColor
     static colorGMHSV = function(gamutMapping/*:int<OKColorMapping>*/ = _gamutMappingDefault)/*->HSVStruct*/ {
-        /// @hint OKColor:colorGMHSV(?gamutMapping:int<OKColorMapping>)->HSVStruct Get color values valid for rendering in GameMaker HSV format with 0-255 range.
+        /// @hint OKColor:colorGMHSV(?gamutMapping:int<OKColorMapping>)->HSVStruct Get color values valid for rendering in GameMaker HSV format. Components are in 0-255 range.
         
         _updateMapped(gamutMapping);
         var mappedHSV = (_gamutMappedColorCache /*#as OKColor*/).getHSV();
@@ -1349,13 +1337,13 @@ function OKColor() constructor {
         }
     }
     
-    /// @function colorHSL([gamutMapping])
-    /// @self OKColor
-    /// @pure
-    /// @param {Enum.OKColorMapping} [gamutMapping] Gamut mapping type, default is OKLCH chroma reduction.
     /// @description With this method you can get color values valid for rendering in HSL format.
+    /// @param {Enum.OKColorMapping} [gamutMapping] Gamut mapping type, default is OKLCH chroma reduction.
+    /// @return {Struct.h:Real;s:Real;l:Real} Struct with h, s and l components. Hue in a 0-360 range, saturation and lightness is in 0-1.
+    /// @pure
+    /// @self OKColor
     static colorHSL = function(gamutMapping/*:int<OKColorMapping>*/ = _gamutMappingDefault)/*->HSLStruct*/ {
-        /// @hint OKColor:colorHSL(?gamutMapping:int<OKColorMapping>)->HSLStruct Get color values valid for rendering in HSL format.
+        /// @hint OKColor:colorHSL(?gamutMapping:int<OKColorMapping>)->HSLStruct Get color values valid for rendering in HSL format. Hue in a 0-360 range, saturation and lightness is in 0-1.
         
         _updateMapped(gamutMapping);
         var mappedHSL = (_gamutMappedColorCache /*#as OKColor*/).getHSL();
@@ -1371,22 +1359,20 @@ function OKColor() constructor {
     
     #region Utility
     
-    /// @function clone()
-    /// @self OKColor
-    /// @pure
-    /// @returns {Struct.OKColor} New OKColor instance.
     /// @description With this method you can get a new copy of OKColor struct with the same color.
+    /// @returns {Struct.OKColor} New OKColor instance.
+    /// @pure
+    /// @self OKColor
     static clone = function()/*->OKColor*/ {
         /// @hint OKColor:clone()->OKColor Get a new copy of OKColor struct with the same color.
         return variable_clone(self);
     }
     
-    /// @function cloneMapped([gamutMapping])
-    /// @self OKColor
-    /// @pure
-    /// @param {Enum.OKColorMapping} [gamutMapping] Gamut mapping type, default is OKLCH chroma reduction.
-    /// @returns {Struct.OKColor}
     /// @description With this method you can get a new copy of OKColor struct with the same color mapped for rendering.
+    /// @param {Enum.OKColorMapping} [gamutMapping] Gamut mapping type, default is OKLCH chroma reduction.
+    /// @returns {Struct.OKColor} New OKColor instance.
+    /// @pure
+    /// @self OKColor
     static cloneMapped = function(gamutMapping/*:int<OKColorMapping>*/ = _gamutMappingDefault)/*->OKColor*/ {
         /// @hint OKColor:cloneMapped(?gamutMapping:int<OKColorMapping>)->OKColor Get a new copy of OKColor struct with the same color mapped for rendering.
         
@@ -1395,14 +1381,13 @@ function OKColor() constructor {
         return variable_clone((_gamutMappedColorCache /*#as OKColor*/));
     }
     
-    /// @function mix(mixColor, amount, [colorMixing], [gamutMapping])
-    /// @self OKColor
+    /// @description With this method you can mix additional color to the current one with a specified amount.
     /// @param {Struct.OKColor} mixColor Additional color to mix with.
     /// @param {Real} amount How much to mix a color in 0-1 range.
     /// @param {Enum.OKColorMixing} [colorMixing] Color mixing type, default is OKLab interpolation.
     /// @param {Enum.OKColorMapping} [gamutMapping] Gamut mapping type, default is OKLCH chroma reduction.
     /// @returns {Struct.OKColor} The same OKColor instance that the method was called on, for method chaining.
-    /// @description With this method you can mix additional color to the current one with a specified amount.
+    /// @self OKColor
     static mix = function(mixColor/*:OKColor*/, amount/*:number*/, colorMixing/*:int<OKColorMixing>*/ = _colorMixingDefault, gamutMapping/*:int<OKColorMapping>*/ = _gamutMappingDefault)/*->OKColor*/ {
         /// @hint OKColor:mix(mixColor:OKColor, amount:number, ?colorMixing:int<OKColorMixing>?, ?gamutMapping:int<OKColorMapping>?)->OKColor Mix additional color to the current one with specified amount. Returns the same OKColor instance that the method was called on, for method chaining.
         
@@ -1415,15 +1400,14 @@ function OKColor() constructor {
         return self;
     }
     
-    /// @function cloneMixed(mixColor, amount, [colorMixing], [gamutMapping])
-    /// @self OKColor
-    /// @pure
+    /// @description  With this method you can get a new copy of OKColor struct with the additional color mixed.
     /// @param {Struct.OKColor} mixColor Additional color to mix with.
     /// @param {Real} amount How much to mix a color in 0-1 range.
     /// @param {Enum.OKColorMixing} [colorMixing] Color mixing type, default is OKLab interpolation.
     /// @param {Enum.OKColorMapping} [gamutMapping] Gamut mapping type, default is OKLCH chroma reduction.
     /// @returns {Struct.OKColor} New OKColor instance.
-    /// @description  With this method you can get a new copy of OKColor struct with the additional color mixed.
+    /// @pure
+    /// @self OKColor
     static cloneMixed = function(mixColor/*:OKColor*/, amount/*:number*/, colorMixing/*:int<OKColorMixing>*/ = _colorMixingDefault, gamutMapping/*:int<OKColorMapping>*/ = _gamutMappingDefault)/*->OKColor*/ {
         /// @hint OKColor:cloneMixed(mixColor:OKColor, amount:number, ?colorMixing:int<OKColorMixing>?, ?gamutMapping:int<OKColorMapping>?)->OKColor Get a new copy of OKColor struct with the additional color mixed.
         
