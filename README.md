@@ -46,7 +46,8 @@ Usually, the choice of specific colors in the game is made manually by the game 
 
 Let's say you want to recolor specific features of your character sprite in-game. One way is to generate a new palette using a basic `hue` shift in the HSV space. Another option is to use the OKLCH model and apply a `hue` shift there. This latter approach often provides more appealing results:
 
-![figure_1_4_character_palette](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/f547f063-48c1-442b-9db4-fd982cb91fc9)
+![figure_1_4_character_palette](https://github.com/KeeVeeGames/OKColor.gml/assets/10993317/f547f063-48c1-442b-9db4-fd982cb91fc9)  
+<sub><sub>https://free-game-assets.itch.io/free-3-cyberpunk-sprites-pixel-art</sub></sub>
 
 With OKLCH the lightness is consistent throughout all the hue changes, shadows and highlights remain intact, and the overall visual is enhanced. This extends to other components: you can be sure that colors with the same `hue` will have the same perceptual hue, unlike HSV which tends to shift it when brightness is changed (for example making blue become more purple when increasing `value`).
 
